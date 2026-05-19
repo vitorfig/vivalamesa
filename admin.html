@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viva La Mesa — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #FAF7F0;
+  --green: #1E2E1E;
+  --green-mid: #2D4428;
+  --gold: #B8922A;
+  --gold-light: #D4AF5C;
+  --terra: #8B4A35;
+  --red: #C0392B;
+  --border: #E0D8CC;
+  --text: #1A1A1A;
+  --muted: #777;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--text); min-height: 100vh; }
+
+/* ── LOGIN ── */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green);
+}
+.login-box {
+  background: white;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+.login-box img { height: 90px; margin-bottom: 1.5rem; }
+.login-box h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; color: var(--green); margin-bottom: 0.3rem; }
+.login-box p { font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem; letter-spacing: 0.1em; }
+.login-box input {
+  width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--border);
+  font-family: 'Raleway', sans-serif; font-size: 0.9rem; margin-bottom: 1rem;
+  outline: none; transition: border 0.3s;
+}
+.login-box input:focus { border-color: var(--gold); }
+.login-box button {
+  width: 100%; padding: 0.95rem; background: var(--green); color: white;
+  border: none; font-family: 'Raleway', sans-serif; font-size: 0.78rem;
+  font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+  transition: background 0.3s;
+}
+.login-box button:hover { background: var(--gold); }
+.login-error { color: var(--red); font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+
+/* ── LAYOUT ── */
+.app { display: none; min-height: 100vh; }
+.app.visible { display: flex; flex-direction: column; }
+
+.topbar {
+  background: var(--green);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar img { height: 44px; }
+.topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+.topbar a { color: rgba(255,255,255,0.7); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--gold-light); }
+.logout-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7);
+  padding: 0.4rem 1rem; font-family: 'Raleway', sans-serif; font-size: 0.72rem;
+  font-weight: 600; letter-spacing: 0.15em; cursor: pointer; transition: all 0.2s;
+}
+.logout-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+.tabs {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  padding: 0 2rem;
+}
+.tab-btn {
+  padding: 1rem 1.5rem;
+  font-family: 'Raleway', sans-serif; font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+  background: none; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.2s; margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--green); border-bottom-color: var(--gold); }
+
+.content { padding: 2rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+/* ── PANELS ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.panel-header h3 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--green); font-weight: 400; }
+
+.btn-add {
+  background: var(--green); color: white; border: none;
+  padding: 0.7rem 1.5rem; font-family: 'Raleway', sans-serif;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.btn-add:hover { background: var(--gold); }
+
+/* ── CARDS ── */
+.item-list { display: grid; gap: 0.8rem; }
+
+.item-card {
+  background: white;
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  gap: 1rem;
+  transition: box-shadow 0.2s;
+}
+.item-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.item-card.hidden-item { opacity: 0.5; }
+
+.item-info { display: flex; flex-direction: column; gap: 0.3rem; }
+.item-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--green); }
+.item-meta { font-size: 0.75rem; color: var(--muted); }
+.item-tag {
+  display: inline-block; font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.18rem 0.6rem; border-radius: 2px; margin-right: 0.4rem;
+}
+.item-tag.entrada { background: #EEF5EE; color: var(--green-mid); }
+.item-tag.principal { background: #FFF8ED; color: #8B6000; }
+.item-tag.sobremesa { background: #FFF0ED; color: var(--terra); }
+.item-tag.urgente { background: #FFF0ED; color: var(--terra); }
+.item-tag.normal { background: #EEF5EE; color: var(--green-mid); }
+
+.item-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+.toggle-btn {
+  width: 42px; height: 24px; border-radius: 12px;
+  border: none; cursor: pointer; position: relative;
+  transition: background 0.3s;
+  background: #ddd;
+}
+.toggle-btn.on { background: var(--gold); }
+.toggle-btn::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border-radius: 50%; background: white;
+  top: 3px; left: 3px;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-btn.on::after { transform: translateX(18px); }
+
+.edit-btn, .delete-btn {
+  padding: 0.4rem 0.8rem; font-family: 'Raleway', sans-serif;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s;
+}
+.edit-btn { background: var(--cream); color: var(--green); border: 1px solid var(--border); }
+.edit-btn:hover { background: var(--green); color: white; }
+.delete-btn { background: #FFF0ED; color: var(--terra); border: 1px solid #F5C4B8; }
+.delete-btn:hover { background: var(--terra); color: white; }
+
+.order-btns { display: flex; flex-direction: column; gap: 2px; }
+.order-btn {
+  width: 24px; height: 20px; background: var(--cream); border: 1px solid var(--border);
+  cursor: pointer; font-size: 0.7rem; line-height: 1; transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.order-btn:hover { background: var(--gold-light); }
+
+/* ── MODAL / FORM ── */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 200;
+  backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; padding: 1.5rem;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: white; width: 100%; max-width: 560px;
+  max-height: 90vh; overflow-y: auto;
+  padding: 2.5rem; position: relative;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; color: var(--green); margin-bottom: 1.5rem; }
+.modal-close {
+  position: absolute; top: 1.2rem; right: 1.5rem;
+  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);
+}
+
+.field { margin-bottom: 1.2rem; }
+.field label {
+  display: block; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem;
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 0.8rem 0.9rem; border: 1px solid var(--border);
+  font-family: 'Raleway', sans-serif; font-size: 0.9rem; outline: none;
+  transition: border 0.2s; background: white; color: var(--text);
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+.field textarea { resize: vertical; min-height: 80px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field-check { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; cursor: pointer; }
+.field-check input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+
+.dishes-input-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.4rem; }
+.dish-input-row { display: flex; gap: 0.4rem; }
+.dish-input-row input { flex: 1; }
+.dish-input-row button {
+  padding: 0 0.75rem; background: #FFF0ED; border: 1px solid #F5C4B8;
+  color: var(--terra); cursor: pointer; font-size: 1rem; transition: all 0.2s;
+}
+.dish-input-row button:hover { background: var(--terra); color: white; }
+.add-dish-row {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold); background: none; border: none; cursor: pointer;
+  padding: 0.3rem 0; transition: color 0.2s; text-align: left;
+}
+.add-dish-row:hover { color: var(--green); }
+
+.form-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.btn-save {
+  flex: 1; padding: 0.9rem; background: var(--green); color: white; border: none;
+  font-family: 'Raleway', sans-serif; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+}
+.btn-save:hover { background: var(--gold); }
+.btn-cancel {
+  padding: 0.9rem 1.5rem; background: var(--cream); color: var(--text); border: 1px solid var(--border);
+  font-family: 'Raleway', sans-serif; font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.btn-cancel:hover { background: var(--border); }
+
+.img-preview { width: 100%; height: 160px; object-fit: cover; margin-top: 0.6rem; display: none; }
+.img-preview.show { display: block; }
+.chef-preview-full { width: 100%; height: auto; object-fit: contain; margin-top: 1rem; border: 1px solid var(--border); display: none; }
+.chef-preview-full.show { display: block; }
+.midia-section { margin-bottom: 2.5rem; padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+.midia-section:last-child { border-bottom: none; }
+
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+  background: var(--green); color: white; padding: 0.9rem 1.5rem;
+  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.1em;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  transform: translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+.reservas-grupo {
+  margin-bottom: 2rem;
+}
+.reservas-grupo-header {
+  background: var(--green); color: white;
+  padding: 0.75rem 1.25rem;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.5rem;
+}
+.reservas-grupo-header h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 400; }
+.reservas-grupo-header .badge {
+  background: var(--gold); color: white;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+  padding: 0.2rem 0.65rem; border-radius: 2px;
+}
+.reserva-row {
+  background: white; border: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; padding: 0.9rem 1.25rem; gap: 1rem;
+  margin-bottom: 0.4rem; transition: box-shadow 0.2s;
+}
+.reserva-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.reserva-row.contatado { opacity: 0.55; }
+.reserva-info { display: flex; flex-direction: column; gap: 0.25rem; }
+.reserva-nome { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--green); }
+.reserva-meta { font-size: 0.75rem; color: var(--muted); }
+.reserva-meta a { color: var(--gold); text-decoration: none; }
+.reserva-meta a:hover { text-decoration: underline; }
+.reserva-actions { display: flex; align-items: center; gap: 0.6rem; }
+.btn-contato {
+  padding: 0.35rem 0.8rem; font-family: 'Raleway', sans-serif;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; border: none; transition: all 0.2s;
+  background: #EEF5EE; color: var(--green-mid); border: 1px solid #C8DBC8;
+}
+.btn-contato:hover { background: var(--green-mid); color: white; }
+.btn-contato.done { background: #f0f0f0; color: #999; border-color: #ddd; }
+
+.texto-section { margin-bottom: 2rem; }
+.texto-section-header {
+  background: var(--green); color: white;
+  padding: 0.7rem 1rem; margin-bottom: 0.8rem;
+  font-family: 'Raleway', sans-serif; font-size: 0.72rem;
+  font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+}
+.texto-field { margin-bottom: 1rem; }
+.texto-field-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.3rem; }
+.texto-field-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.texto-char-count { font-size: 0.68rem; color: var(--muted); }
+.texto-char-count.warn { color: var(--terra); font-weight: 700; }
+.texto-field input, .texto-field textarea {
+  width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border);
+  font-family: 'Raleway', sans-serif; font-size: 0.88rem;
+  outline: none; transition: border 0.2s; background: white; color: var(--text);
+  resize: vertical;
+}
+.texto-field input:focus, .texto-field textarea:focus { border-color: var(--gold); }
+
+@media (max-width: 600px) {
+  .content { padding: 1rem; }
+  .item-card { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+  .modal { padding: 1.5rem; }
+  .reserva-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <img src="fotos/logo/Logo.jpg" alt="Viva La Mesa">
+    <h2>Área Administrativa</h2>
+    <p>Acesso restrito</p>
+    <input type="password" id="pwd-input" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+
+  <div class="topbar">
+    <img src="fotos/logo/Logo.jpg" alt="Viva La Mesa">
+    <div class="topbar-right">
+      <a href="index.html" target="_blank">Ver site ↗</a>
+      <button class="logout-btn" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('eventos', this)">Próximos Eventos</button>
+    <button class="tab-btn" onclick="switchTab('reservas', this)">Reservas</button>
+    <button class="tab-btn" onclick="switchTab('cardapio', this)">Cardápio</button>
+    <button class="tab-btn" onclick="switchTab('midia', this)">Mídia</button>
+    <button class="tab-btn" onclick="switchTab('textos', this)">Textos do Site</button>
+  </div>
+
+  <div class="content">
+
+    <!-- EVENTOS PANEL -->
+    <div class="panel active" id="panel-eventos">
+      <div class="panel-header">
+        <h3>Próximos Eventos</h3>
+        <button class="btn-add" onclick="openEventModal()">+ Novo Evento</button>
+      </div>
+
+      <div style="margin-bottom:1.5rem;border:1px solid var(--border);background:white;">
+        <div style="background:var(--green);padding:0.6rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="color:var(--gold-light);font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;">Regra de Escassez no Site</span>
+            <span style="color:rgba(255,255,255,0.4);font-size:0.72rem;">— vagas exibidas para gerar escassez</span>
+          </div>
+          <button onclick="saveScarcityRules()" style="background:var(--gold);color:white;border:none;padding:0.35rem 1rem;font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Salvar Regras</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.8rem;" id="scarcity-table">
+          <thead>
+            <tr style="background:var(--cream);">
+              <th style="padding:0.55rem 1rem;text-align:left;font-weight:700;letter-spacing:0.08em;color:var(--green);border-bottom:1px solid var(--border);">Prazo até o evento</th>
+              <th style="padding:0.55rem 1rem;text-align:left;font-weight:700;letter-spacing:0.08em;color:var(--green);border-bottom:1px solid var(--border);">Máximo exibido (%)</th>
+            </tr>
+          </thead>
+          <tbody id="scarcity-tbody"></tbody>
+        </table>
+        <div style="padding:0.5rem 1rem;font-size:0.72rem;color:var(--muted);border-top:1px solid var(--border);">
+          Se as vagas reais restantes forem menores que o cap, o número real é exibido. Mínimo sempre 1 vaga (enquanto houver disponibilidade real).
+        </div>
+      </div>
+
+      <div class="item-list" id="event-list"></div>
+    </div>
+
+    <!-- RESERVAS PANEL -->
+    <div class="panel" id="panel-reservas">
+      <div class="panel-header">
+        <h3>Reservas</h3>
+        <button class="btn-add" style="background:var(--terra);" onclick="if(confirm('Apagar TODAS as reservas?')){localStorage.removeItem('vlm_reservas');renderReservasList();toast('Reservas apagadas');}">Limpar tudo</button>
+      </div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Solicitações feitas pelo formulário do site, agrupadas por evento.</p>
+      <div id="reservas-container"></div>
+    </div>
+
+    <!-- CARDÁPIO PANEL -->
+    <div class="panel" id="panel-cardapio">
+      <div class="panel-header">
+        <h3>Cardápio</h3>
+        <button class="btn-add" onclick="openDishModal()">+ Novo Prato</button>
+      </div>
+      <div class="item-list" id="dish-list"></div>
+    </div>
+
+    <!-- MÍDIA PANEL (unificado) -->
+    <div class="panel" id="panel-midia">
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Logo</h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Logo exibida no menu de navegação e no rodapé do site. Use o caminho relativo (ex: <code>fotos/logo/Logo.jpg</code>) ou URL externa.</p>
+        <div class="field">
+          <label>URL ou caminho da logo</label>
+          <input type="text" id="logo-input" placeholder="fotos/logo/Logo.jpg ou https://..." oninput="previewLogo()">
+          <img id="logo-preview" class="chef-preview-full" alt="Preview Logo" style="max-height:120px;object-fit:contain;">
+        </div>
+        <div class="form-actions" style="margin-top:1rem;">
+          <button class="btn-save" onclick="saveLogo()">Salvar Logo</button>
+        </div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Vídeo Hero</h3>
+          <button class="btn-add" onclick="openHeroModal()">+ Adicionar Vídeo</button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Vídeos que aparecem em loop na primeira seção do site. Se houver mais de um, eles se alternam automaticamente ao terminar.</p>
+        <div class="item-list" id="hero-list"></div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Fotos — A Experiência</h3>
+          <button class="btn-add" onclick="openMediaModal('experiencia')">+ Adicionar Foto</button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Fotos que aparecem no carrossel da segunda seção do site.</p>
+        <div class="item-list" id="experiencia-list"></div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Edições Anteriores</h3>
+          <button class="btn-add" onclick="openMediaModal('galeria')">+ Adicionar Foto</button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Fotos da galeria horizontal na seção "Edições Anteriores".</p>
+        <div class="item-list" id="galeria-list"></div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Foto do Chef</h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Foto exibida na seção "O Criador". Use o caminho relativo (ex: <code>fotos/rapha/foto.jpg</code>) ou URL externa.</p>
+        <div class="field">
+          <label>URL ou caminho da foto</label>
+          <input type="text" id="chef-photo-input" placeholder="fotos/rapha/foto.jpg ou https://..." oninput="previewChefPhoto()">
+          <img id="chef-photo-preview" class="chef-preview-full" alt="Preview Chef">
+        </div>
+        <div class="form-actions" style="margin-top:1rem;">
+          <button class="btn-save" onclick="saveChefPhoto()">Salvar Foto do Chef</button>
+        </div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Música do Site</h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Música ambiente que toca na home. Use o caminho relativo (ex: <code>jazz.mp3</code>) ou uma URL direta para arquivo MP3.</p>
+        <div class="field">
+          <label>URL ou caminho do arquivo MP3</label>
+          <input type="text" id="music-input" placeholder="jazz.mp3 ou https://..." oninput="previewMusic()">
+        </div>
+        <div id="music-preview-wrap" style="display:none;margin:1rem 0;background:var(--green);padding:1.25rem;border-radius:2px;">
+          <p style="color:rgba(255,255,255,0.6);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.75rem;">Prévia</p>
+          <audio id="music-preview-player" controls style="width:100%;accent-color:var(--gold);" preload="metadata">
+            <source id="music-preview-src" src="" type="audio/mpeg">
+          </audio>
+        </div>
+        <div class="form-actions" style="margin-top:0.5rem;">
+          <button class="btn-save" onclick="saveMusic()">Salvar Música</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TEXTOS PANEL -->
+    <div class="panel" id="panel-textos">
+      <div class="panel-header">
+        <h3>Textos do Site</h3>
+        <button class="btn-save" onclick="saveTexts()" style="padding:0.7rem 1.5rem;">Salvar Todos</button>
+      </div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Edite os textos de cada seção. O número ao lado do campo mostra quantos caracteres restam.</p>
+      <div id="textos-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL EVENTO -->
+<div class="modal-bg" id="event-modal-bg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEventModal()">×</button>
+    <h3 id="event-modal-title">Novo Evento</h3>
+    <input type="hidden" id="event-id">
+
+    <div class="field-row">
+      <div class="field">
+        <label>Data do Evento</label>
+        <div style="position:relative;">
+          <input type="text" id="ev-date" placeholder="DD/MM/AAAA" maxlength="10" oninput="onDateInput(this)"
+            style="padding-right:2.2rem;" autocomplete="off">
+          <span style="position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:1rem;">📅</span>
+          <input type="date" id="ev-date-picker" tabindex="-1"
+            style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
+            onchange="onDatePickerChange(this)">
+        </div>
+      </div>
+      <div class="field">
+        <label>Dia da Semana</label>
+        <input type="text" id="ev-weekday" readonly placeholder="Preenchido automaticamente"
+          style="background:var(--cream);color:var(--green);font-weight:600;cursor:default;">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Preço (R$)</label>
+        <input type="number" id="ev-price" placeholder="150">
+      </div>
+      <div class="field" style="flex:0 0 auto;min-width:0;"></div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Cidade</label>
+        <input type="text" id="ev-city" placeholder="Florianópolis">
+      </div>
+      <div class="field">
+        <label>Estado (sigla)</label>
+        <input type="text" id="ev-state" placeholder="SC" maxlength="2">
+      </div>
+    </div>
+    <div class="field">
+      <label>Título do Evento</label>
+      <input type="text" id="ev-title" placeholder="Ex: Noite do Bife Wellington">
+    </div>
+    <div class="field">
+      <label>Total de Vagas (capacidade real do evento)</label>
+      <input type="number" id="ev-vagas" placeholder="12" min="1">
+      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">O site mostrará automaticamente menos vagas para gerar escassez. Este é o número real.</small>
+    </div>
+    <div class="field">
+      <label>Pratos do Menu</label>
+      <div class="dishes-input-list" id="ev-dishes-list"></div>
+      <button class="add-dish-row" onclick="addDishRow()">+ Adicionar prato</button>
+    </div>
+    <div class="field" style="display:flex;gap:2rem;">
+      <label class="field-check">
+        <input type="checkbox" id="ev-urgente"> Marcar como urgente
+      </label>
+      <label class="field-check">
+        <input type="checkbox" id="ev-visible" checked> Visível no site
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeEventModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveEvent()">Salvar Evento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRATO -->
+<div class="modal-bg" id="dish-modal-bg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeDishModal()">×</button>
+    <h3 id="dish-modal-title">Novo Prato</h3>
+    <input type="hidden" id="dish-id">
+
+    <div class="field">
+      <label>Nome do Prato</label>
+      <input type="text" id="dish-name" placeholder="Ex: Bife Wellington">
+    </div>
+    <div class="field">
+      <label>Categoria</label>
+      <select id="dish-category">
+        <option value="Entrada">Entrada</option>
+        <option value="Prato Principal">Prato Principal</option>
+        <option value="Sobremesa">Sobremesa</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <textarea id="dish-desc" placeholder="Descreva os ingredientes e preparo..."></textarea>
+    </div>
+    <div class="field">
+      <label>URL da Foto</label>
+      <input type="url" id="dish-image" placeholder="https://..." oninput="previewImage()">
+      <img id="dish-img-preview" class="img-preview" alt="Preview">
+      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Cole a URL de uma imagem. Dica: suba a foto no <a href="https://imgur.com" target="_blank" style="color:var(--gold);">imgur.com</a> e cole o link aqui.</small>
+    </div>
+    <div class="field">
+      <label>Ordem na listagem</label>
+      <input type="number" id="dish-order" placeholder="1" min="1">
+    </div>
+    <div class="field">
+      <label class="field-check">
+        <input type="checkbox" id="dish-visible" checked> Visível no site
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeDishModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveDish()">Salvar Prato</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VÍDEO HERO -->
+<div class="modal-bg" id="hero-modal-bg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeHeroModal()">×</button>
+    <h3 id="hero-modal-title">Novo Vídeo</h3>
+    <input type="hidden" id="hero-id">
+    <div class="field">
+      <label>URL ou caminho do vídeo</label>
+      <input type="text" id="hero-url" placeholder="video.mp4 ou https://...">
+      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Para vídeos locais, use o caminho relativo (ex: <code>video.mp4</code>). Para externos, cole a URL direta do MP4.</small>
+    </div>
+    <div class="field">
+      <label class="field-check">
+        <input type="checkbox" id="hero-visible" checked> Visível no site
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeHeroModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveHeroVideo()">Salvar Vídeo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FOTO EXPERIÊNCIA / GALERIA -->
+<div class="modal-bg" id="media-modal-bg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeMediaModal()">×</button>
+    <h3 id="media-modal-title">Nova Foto</h3>
+    <input type="hidden" id="media-id">
+    <input type="hidden" id="media-type">
+    <div class="field">
+      <label>URL ou caminho da foto</label>
+      <input type="text" id="media-url" placeholder="fotos/rapha/foto.jpg ou https://..." oninput="previewMediaPhoto()">
+      <img id="media-img-preview" class="img-preview" alt="Preview">
+      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Caminho relativo (ex: <code>fotos/rapha/foto.jpg</code>) ou URL externa.</small>
+    </div>
+    <div class="field">
+      <label>Legenda (alt)</label>
+      <input type="text" id="media-alt" placeholder="Descrição da foto">
+    </div>
+    <div class="field">
+      <label class="field-check">
+        <input type="checkbox" id="media-visible" checked> Visível no site
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeMediaModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveMediaPhoto()">Salvar Foto</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASS = 'vivalamesa2026';
+
+// ── AUTH ──
+function doLogin() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASS) {
+    sessionStorage.setItem('vlm_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    renderAll();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('vlm_auth');
+  location.reload();
+}
+window.addEventListener('load', () => {
+  if (sessionStorage.getItem('vlm_auth')) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    renderAll();
+  }
+});
+
+// ── DATA ──
+const DEFAULT_EVENTS = [
+  { id:1, day:'15', month:'Maio 2026', weekday:'Quinta-Feira', city:'Florianópolis', state:'SC', title:'Noite do Steak Tartare', dishes:['Steak Tartare · Gema Curada','Pappardelle de Fraldinha','Brownie & Farofa Crocante'], price:150, vagas_total:12, urgente:true, visible:true },
+  { id:2, day:'29', month:'Maio 2026', weekday:'Sexta-Feira', city:'Curitiba', state:'PR', title:'Noite do Bife Wellington', dishes:['Carpaccio de Salmão','Bife Wellington','Crème Brûlée'], price:180, vagas_total:12, urgente:false, visible:true },
+  { id:3, day:'12', month:'Jun 2026', weekday:'Sexta-Feira', city:'Porto Alegre', state:'RS', title:'Noite Italiana', dishes:['Steak Tartare · Tapioca','Pappardelle de Fraldinha','Brownie de Chocolate'], price:150, vagas_total:12, urgente:false, visible:true },
+  { id:4, day:'26', month:'Jun 2026', weekday:'Sexta-Feira', city:'São Paulo', state:'SP', title:'Menu Autoral', dishes:['Carpaccio de Salmão','Bife Wellington','Crème Brûlée'], price:200, vagas_total:12, urgente:false, visible:true },
+  { id:5, day:'10', month:'Jul 2026', weekday:'Sexta-Feira', city:'Rio de Janeiro', state:'RJ', title:'Noite do Mar', dishes:['Carpaccio de Salmão','Pappardelle de Fraldinha','Crème Brûlée'], price:200, vagas_total:12, urgente:false, visible:true }
+];
+const DEFAULT_DISHES = [
+  { id:1, category:'Prato Principal', name:'Pappardelle com Ragu de Fraldinha', desc:'Massa fresca artesanal com ragu de fraldinha cozida lentamente, grana padano ralado na hora e crème fraîche.', image:'fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg', hasImage:true, order:1, visible:true },
+  { id:2, category:'Entrada', name:'Steak Tartare', desc:'Com crocante de tapioca e gema curada.', image:'fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg', hasImage:true, order:2, visible:true },
+  { id:3, category:'Sobremesa', name:'Brownie de Chocolate Meio Amargo', desc:'Com sorvete de creme e farofa crocante caramelizada.', image:'fotos/pratos/c53e6731-941b-4962-8841-4b6448780eb9.jpeg', hasImage:true, order:3, visible:true },
+  { id:4, category:'Entrada', name:'Carpaccio de Salmão', desc:'Com alcaparras, azeite trufado, raspas de limão siciliano e ervas frescas.', image:'', hasImage:false, order:4, visible:true },
+  { id:5, category:'Prato Principal', name:'Bife Wellington', desc:'Filé mignon envolto em duxelles de cogumelos e massa folhada, selado à perfeição.', image:'', hasImage:false, order:5, visible:true },
+  { id:6, category:'Sobremesa', name:'Crème Brûlée', desc:'Clássico francês com caramelização flamejada na hora e toque de baunilha.', image:'', hasImage:false, order:6, visible:true }
+];
+
+function getEvents() { try { return JSON.parse(localStorage.getItem('vlm_events')) || DEFAULT_EVENTS; } catch(e) { return DEFAULT_EVENTS; } }
+function getDishes() { try { return JSON.parse(localStorage.getItem('vlm_dishes')) || DEFAULT_DISHES; } catch(e) { return DEFAULT_DISHES; } }
+function saveEvents(arr) { localStorage.setItem('vlm_events', JSON.stringify(arr)); }
+function saveDishes(arr) { localStorage.setItem('vlm_dishes', JSON.stringify(arr)); }
+function nextId(arr) { return arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1; }
+
+// ── TABS ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function renderAll() { renderScarcityTable(); renderEventList(); renderReservasList(); renderDishList(); renderLogoPanel(); renderHeroList(); renderExperienciaList(); renderGaleriaList(); renderChefPanel(); renderMusicPanel(); renderTextosPanel(); }
+
+// ── DATE HELPERS ──
+const MONTHS_PT_NAME = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MONTHS_PT_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const WEEKDAYS_PT = ['Domingo','Segunda-Feira','Terça-Feira','Quarta-Feira','Quinta-Feira','Sexta-Feira','Sábado'];
+
+function parseDDMMYYYY(str) {
+  const m = (str||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+}
+
+function dateToEventFields(d) {
+  if (!d || isNaN(d)) return null;
+  return {
+    day: String(d.getDate()),
+    month: MONTHS_PT_NAME[d.getMonth()] + ' ' + d.getFullYear(),
+    weekday: WEEKDAYS_PT[d.getDay()]
+  };
+}
+
+function eventFieldsToDate(ev) {
+  if (ev.date) return parseDDMMYYYY(ev.date);
+  // fallback para dados antigos
+  const mName = (ev.month||'').split(' ')[0].toLowerCase();
+  const mIdx = MONTHS_PT.hasOwnProperty(mName) ? MONTHS_PT[mName] : 0;
+  const year = parseInt((ev.month||'').split(' ')[1]) || new Date().getFullYear();
+  return new Date(year, mIdx, parseInt(ev.day)||1);
+}
+
+function onDateInput(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length > 2) v = v.slice(0,2)+'/'+v.slice(2);
+  if (v.length > 5) v = v.slice(0,5)+'/'+v.slice(5);
+  input.value = v.slice(0,10);
+  const d = parseDDMMYYYY(input.value);
+  document.getElementById('ev-weekday').value = d ? WEEKDAYS_PT[d.getDay()] : '';
+}
+
+function onDatePickerChange(picker) {
+  if (!picker.value) return;
+  const [y, m, d] = picker.value.split('-');
+  const formatted = `${d}/${m}/${y}`;
+  document.getElementById('ev-date').value = formatted;
+  const dt = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+  document.getElementById('ev-weekday').value = WEEKDAYS_PT[dt.getDay()];
+  picker.value = '';
+}
+
+// ── ESCASSEZ ──
+const MONTHS_PT = {janeiro:0,fevereiro:1,'março':2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11,jan:0,fev:1,'mar':2,abr:3,mai:4,jun:5,jul:6,ago:7,set:8,out:9,nov:10,dez:11};
+
+const DEFAULT_SCARCITY_RULES = [
+  { minDays: 60, pct: 50, label: '+60 dias' },
+  { minDays: 30, pct: 25, label: '30–59 dias' },
+  { minDays: 14, pct: 10, label: '14–29 dias' },
+  { minDays: 7,  pct: 5,  label: '7–13 dias' },
+  { minDays: 0,  pct: 3,  label: '7 dias ou menos' }
+];
+
+function getScarcityRules() {
+  try { return JSON.parse(localStorage.getItem('vlm_scarcity')) || DEFAULT_SCARCITY_RULES; }
+  catch(e) { return DEFAULT_SCARCITY_RULES; }
+}
+function saveScarcityRulesData(arr) { localStorage.setItem('vlm_scarcity', JSON.stringify(arr)); }
+
+function renderScarcityTable() {
+  const tbody = document.getElementById('scarcity-tbody');
+  if (!tbody) return;
+  const rules = getScarcityRules();
+  const colors = ['var(--green)','var(--gold)','var(--terra)','var(--red)','#8B2BE2'];
+  tbody.innerHTML = rules.map((r, i) => `
+    <tr style="${i%2===1?'background:var(--cream);':''}border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem 1rem;color:var(--muted);">${r.label}</td>
+      <td style="padding:0.4rem 1rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="number" min="1" max="100" value="${r.pct}" id="scarcity-pct-${i}"
+            style="width:70px;padding:0.3rem 0.5rem;border:1px solid var(--border);font-family:'Raleway',sans-serif;font-size:0.9rem;font-weight:700;color:${colors[i]};text-align:center;outline:none;">
+          <span style="font-size:0.82rem;color:var(--muted);">% da capacidade</span>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function saveScarcityRules() {
+  const rules = getScarcityRules();
+  rules.forEach((r, i) => {
+    const input = document.getElementById(`scarcity-pct-${i}`);
+    if (input) r.pct = Math.min(100, Math.max(1, parseInt(input.value) || r.pct));
+  });
+  saveScarcityRulesData(rules);
+  toast('Regras de escassez salvas!');
+  renderEventList();
+}
+
+function parseEventDate(day, month) {
+  const parts = (month || '').toLowerCase().split(' ');
+  const mNum = MONTHS_PT[parts[0]] ?? 0;
+  const year = parseInt(parts[1]) || new Date().getFullYear();
+  return new Date(year, mNum, parseInt(day) || 1);
+}
+
+function getScarcityDisplay(ev, reservasCount) {
+  const total = ev.vagas_total || ev.vagas || 12;
+  const realRemaining = Math.max(0, total - reservasCount);
+  if (realRemaining === 0) return 0;
+  const eventDate = parseEventDate(ev.day, ev.month);
+  const daysUntil = Math.ceil((eventDate - new Date()) / 86400000);
+  const rules = getScarcityRules().slice().sort((a,b) => b.minDays - a.minDays);
+  const rule = rules.find(r => daysUntil >= r.minDays) || rules[rules.length-1];
+  const maxDisplay = Math.max(1, Math.floor(total * rule.pct / 100));
+  return Math.min(realRemaining, maxDisplay);
+}
+
+// ── EVENTS LIST ──
+function renderEventList() {
+  const list = document.getElementById('event-list');
+  const events = getEvents();
+  const allReservas = getReservas();
+  if (!events.length) { list.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Nenhum evento cadastrado.</p>'; return; }
+  list.innerHTML = events.map(ev => {
+    const total = ev.vagas_total || ev.vagas || 12;
+    const reservasCount = allReservas.filter(r => r.eventoId === ev.id).length;
+    const realRemaining = Math.max(0, total - reservasCount);
+    const displayed = getScarcityDisplay(ev, reservasCount);
+    const pctOcupado = Math.round((reservasCount / total) * 100);
+    return `
+    <div class="item-card ${ev.visible ? '' : 'hidden-item'}" id="ev-card-${ev.id}">
+      <div class="item-info">
+        <div class="item-title">${ev.day} de ${ev.month} — ${ev.title}</div>
+        <div class="item-meta">
+          📍 ${ev.city}, ${ev.state} &nbsp;·&nbsp; R$${ev.price}/pessoa
+          ${ev.urgente ? '&nbsp;·&nbsp;<span class="item-tag urgente">Urgente</span>' : ''}
+          ${!ev.visible ? '&nbsp;·&nbsp;<span class="item-tag" style="background:#eee;color:#999;">Oculto</span>' : ''}
+        </div>
+        <div class="item-meta" style="margin-top:4px;display:flex;gap:1rem;flex-wrap:wrap;">
+          <span title="Capacidade total">🪑 Total: <strong>${total}</strong></span>
+          <span title="Reservas confirmadas">📋 Reservas: <strong>${reservasCount}</strong></span>
+          <span title="Vagas reais restantes" style="color:${realRemaining<=2?'var(--terra)':'inherit'}">✅ Restantes: <strong>${realRemaining}</strong></span>
+          <span title="Número exibido no site (escassez automática)" style="color:var(--gold);font-weight:700;">👁 Site mostrará: <strong>${displayed} vaga${displayed!==1?'s':''}</strong></span>
+        </div>
+        <div class="item-meta" style="margin-top:2px;">${ev.dishes.join(' · ')}</div>
+      </div>
+      <div class="item-actions">
+        <button class="toggle-btn ${ev.visible ? 'on' : ''}" title="${ev.visible ? 'Ocultar' : 'Mostrar'}" onclick="toggleEvent(${ev.id})"></button>
+        <button class="edit-btn" onclick="openEventModal(${ev.id})">Editar</button>
+        <button class="delete-btn" onclick="deleteEvent(${ev.id})">Excluir</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEvent(id) {
+  const events = getEvents();
+  const ev = events.find(e => e.id === id);
+  if (ev) { ev.visible = !ev.visible; saveEvents(events); renderEventList(); toast(ev.visible ? 'Evento visível no site' : 'Evento ocultado'); }
+}
+
+function deleteEvent(id) {
+  if (!confirm('Excluir este evento?')) return;
+  saveEvents(getEvents().filter(e => e.id !== id));
+  renderEventList();
+  toast('Evento excluído');
+}
+
+// ── EVENT MODAL ──
+let editingEventId = null;
+
+function openEventModal(id) {
+  editingEventId = id || null;
+  document.getElementById('event-modal-title').textContent = id ? 'Editar Evento' : 'Novo Evento';
+
+  if (id) {
+    const ev = getEvents().find(e => e.id === id);
+    // popula data: usa ev.date se existir, senão reconstrói do formato antigo
+    let dateStr = ev.date || '';
+    if (!dateStr && ev.day && ev.month) {
+      const d = eventFieldsToDate(ev);
+      if (d && !isNaN(d)) {
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        dateStr = `${dd}/${mm}/${d.getFullYear()}`;
+      }
+    }
+    document.getElementById('ev-date').value = dateStr;
+    document.getElementById('ev-weekday').value = ev.weekday || '';
+    document.getElementById('ev-price').value = ev.price;
+    document.getElementById('ev-city').value = ev.city;
+    document.getElementById('ev-state').value = ev.state;
+    document.getElementById('ev-title').value = ev.title;
+    document.getElementById('ev-vagas').value = ev.vagas_total || ev.vagas || 12;
+    document.getElementById('ev-urgente').checked = ev.urgente;
+    document.getElementById('ev-visible').checked = ev.visible;
+    renderDishRows(ev.dishes);
+  } else {
+    document.getElementById('ev-date').value = '';
+    document.getElementById('ev-weekday').value = '';
+    document.getElementById('ev-price').value = '';
+    document.getElementById('ev-city').value = '';
+    document.getElementById('ev-state').value = '';
+    document.getElementById('ev-title').value = '';
+    document.getElementById('ev-vagas').value = 12;
+    document.getElementById('ev-urgente').checked = false;
+    document.getElementById('ev-visible').checked = true;
+    renderDishRows(['','','']);
+  }
+  document.getElementById('event-modal-bg').classList.add('open');
+}
+
+function closeEventModal() { document.getElementById('event-modal-bg').classList.remove('open'); }
+
+function renderDishRows(dishes) {
+  const container = document.getElementById('ev-dishes-list');
+  container.innerHTML = dishes.map(d => `
+    <div class="dish-input-row">
+      <input type="text" value="${d}" placeholder="Nome do prato">
+      <button onclick="this.parentElement.remove()">×</button>
+    </div>`).join('');
+}
+
+function addDishRow() {
+  const container = document.getElementById('ev-dishes-list');
+  const row = document.createElement('div');
+  row.className = 'dish-input-row';
+  row.innerHTML = `<input type="text" placeholder="Nome do prato"><button onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(row);
+}
+
+function saveEvent() {
+  const title = document.getElementById('ev-title').value.trim();
+  if (!title) { alert('Preencha o título do evento.'); return; }
+
+  const dishes = [...document.querySelectorAll('#ev-dishes-list input')].map(i => i.value.trim()).filter(Boolean);
+  const events = getEvents();
+
+  const dateStr = document.getElementById('ev-date').value.trim();
+  const parsedDate = parseDDMMYYYY(dateStr);
+  if (!parsedDate) { alert('Data inválida. Use o formato DD/MM/AAAA.'); return; }
+  const fields = dateToEventFields(parsedDate);
+
+  const data = {
+    id: editingEventId || nextId(events),
+    date: dateStr,
+    day: fields.day,
+    month: fields.month,
+    weekday: fields.weekday,
+    city: document.getElementById('ev-city').value.trim(),
+    state: document.getElementById('ev-state').value.trim().toUpperCase(),
+    title, dishes,
+    price: parseInt(document.getElementById('ev-price').value) || 0,
+    vagas_total: parseInt(document.getElementById('ev-vagas').value) || 12,
+    urgente: document.getElementById('ev-urgente').checked,
+    visible: document.getElementById('ev-visible').checked
+  };
+
+  if (editingEventId) {
+    const i = events.findIndex(e => e.id === editingEventId);
+    events[i] = data;
+  } else {
+    events.push(data);
+  }
+
+  saveEvents(events);
+  closeEventModal();
+  renderEventList();
+  toast(editingEventId ? 'Evento atualizado!' : 'Evento criado!');
+}
+
+// ── DISHES LIST ──
+function renderDishList() {
+  const list = document.getElementById('dish-list');
+  const dishes = getDishes().sort((a,b) => a.order - b.order);
+  if (!dishes.length) { list.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Nenhum prato cadastrado.</p>'; return; }
+
+  const tagClass = { 'Entrada':'entrada', 'Prato Principal':'principal', 'Sobremesa':'sobremesa' };
+
+  list.innerHTML = dishes.map(d => `
+    <div class="item-card ${d.visible ? '' : 'hidden-item'}">
+      <div class="item-info">
+        <div class="item-title">${d.name}</div>
+        <div class="item-meta">
+          <span class="item-tag ${tagClass[d.category] || ''}">${d.category}</span>
+          Ordem: ${d.order}
+          ${!d.visible ? '&nbsp;<span class="item-tag" style="background:#eee;color:#999;">Oculto</span>' : ''}
+        </div>
+        <div class="item-meta">${d.desc}</div>
+      </div>
+      <div class="item-actions">
+        <div class="order-btns">
+          <button class="order-btn" onclick="moveDish(${d.id}, -1)" title="Mover para cima">▲</button>
+          <button class="order-btn" onclick="moveDish(${d.id}, 1)" title="Mover para baixo">▼</button>
+        </div>
+        <button class="toggle-btn ${d.visible ? 'on' : ''}" title="${d.visible ? 'Ocultar' : 'Mostrar'}" onclick="toggleDish(${d.id})"></button>
+        <button class="edit-btn" onclick="openDishModal(${d.id})">Editar</button>
+        <button class="delete-btn" onclick="deleteDish(${d.id})">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleDish(id) {
+  const dishes = getDishes();
+  const d = dishes.find(x => x.id === id);
+  if (d) { d.visible = !d.visible; saveDishes(dishes); renderDishList(); toast(d.visible ? 'Prato visível no site' : 'Prato ocultado'); }
+}
+
+function deleteDish(id) {
+  if (!confirm('Excluir este prato?')) return;
+  saveDishes(getDishes().filter(d => d.id !== id));
+  renderDishList();
+  toast('Prato excluído');
+}
+
+function moveDish(id, dir) {
+  const dishes = getDishes().sort((a,b) => a.order - b.order);
+  const idx = dishes.findIndex(d => d.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= dishes.length) return;
+  const tmp = dishes[idx].order;
+  dishes[idx].order = dishes[newIdx].order;
+  dishes[newIdx].order = tmp;
+  saveDishes(dishes);
+  renderDishList();
+}
+
+// ── DISH MODAL ──
+let editingDishId = null;
+
+function openDishModal(id) {
+  editingDishId = id || null;
+  document.getElementById('dish-modal-title').textContent = id ? 'Editar Prato' : 'Novo Prato';
+  document.getElementById('dish-img-preview').classList.remove('show');
+
+  if (id) {
+    const d = getDishes().find(x => x.id === id);
+    document.getElementById('dish-name').value = d.name;
+    document.getElementById('dish-category').value = d.category;
+    document.getElementById('dish-desc').value = d.desc;
+    document.getElementById('dish-image').value = d.image || '';
+    document.getElementById('dish-order').value = d.order;
+    document.getElementById('dish-visible').checked = d.visible;
+    if (d.image) { const p = document.getElementById('dish-img-preview'); p.src = d.image; p.classList.add('show'); }
+  } else {
+    const dishes = getDishes();
+    document.getElementById('dish-name').value = '';
+    document.getElementById('dish-category').value = 'Entrada';
+    document.getElementById('dish-desc').value = '';
+    document.getElementById('dish-image').value = '';
+    document.getElementById('dish-order').value = dishes.length + 1;
+    document.getElementById('dish-visible').checked = true;
+  }
+  document.getElementById('dish-modal-bg').classList.add('open');
+}
+
+function closeDishModal() { document.getElementById('dish-modal-bg').classList.remove('open'); }
+
+function previewImage() {
+  const url = document.getElementById('dish-image').value.trim();
+  const preview = document.getElementById('dish-img-preview');
+  if (url) { preview.src = url; preview.classList.add('show'); }
+  else { preview.classList.remove('show'); }
+}
+
+function saveDish() {
+  const name = document.getElementById('dish-name').value.trim();
+  if (!name) { alert('Preencha o nome do prato.'); return; }
+
+  const dishes = getDishes();
+  const image = document.getElementById('dish-image').value.trim();
+
+  const data = {
+    id: editingDishId || nextId(dishes),
+    name,
+    category: document.getElementById('dish-category').value,
+    desc: document.getElementById('dish-desc').value.trim(),
+    image,
+    hasImage: !!image,
+    order: parseInt(document.getElementById('dish-order').value) || dishes.length + 1,
+    visible: document.getElementById('dish-visible').checked
+  };
+
+  if (editingDishId) {
+    const i = dishes.findIndex(d => d.id === editingDishId);
+    dishes[i] = data;
+  } else {
+    dishes.push(data);
+  }
+
+  saveDishes(dishes);
+  closeDishModal();
+  renderDishList();
+  toast(editingDishId ? 'Prato atualizado!' : 'Prato criado!');
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// Fecha modais ao clicar fora
+document.getElementById('event-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeEventModal(); });
+document.getElementById('dish-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeDishModal(); });
+document.getElementById('hero-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeHeroModal(); });
+document.getElementById('media-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeMediaModal(); });
+
+// ── RESERVAS ──
+function getReservas() { try { return JSON.parse(localStorage.getItem('vlm_reservas') || '[]'); } catch(e) { return []; } }
+function saveReservas(arr) { localStorage.setItem('vlm_reservas', JSON.stringify(arr)); }
+
+function renderReservasList() {
+  const container = document.getElementById('reservas-container');
+  const reservas = getReservas();
+  const events = getEvents();
+
+  if (!reservas.length) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Nenhuma reserva recebida ainda.</p>';
+    return;
+  }
+
+  // Agrupa por evento
+  const grupos = {};
+  reservas.forEach(r => {
+    const key = r.eventoId || 'sem-evento';
+    if (!grupos[key]) grupos[key] = { label: r.eventoLabel || 'Evento não identificado', items: [] };
+    grupos[key].items.push(r);
+  });
+
+  container.innerHTML = Object.values(grupos).map(g => `
+    <div class="reservas-grupo">
+      <div class="reservas-grupo-header">
+        <h4>${g.label}</h4>
+        <span class="badge">${g.items.length} reserva${g.items.length !== 1 ? 's' : ''}</span>
+      </div>
+      ${g.items.map(r => `
+        <div class="reserva-row ${r.contatado ? 'contatado' : ''}" id="res-row-${r.id}">
+          <div class="reserva-info">
+            <div class="reserva-nome">${r.nome} ${r.sobrenome}</div>
+            <div class="reserva-meta">
+              📱 <a href="https://wa.me/55${r.whatsapp.replace(/\D/g,'')}" target="_blank">${r.whatsapp}</a>
+              &nbsp;·&nbsp; ✉️ ${r.email}
+              &nbsp;·&nbsp; 👥 ${r.pessoas} pessoa${r.pessoas > 1 ? 's' : ''}
+              &nbsp;·&nbsp; 🕐 ${r.data}
+              ${r.contatado ? '&nbsp;·&nbsp; <span style="color:var(--gold);font-weight:600;">✓ Contatado</span>' : ''}
+            </div>
+          </div>
+          <div class="reserva-actions">
+            <button class="btn-contato ${r.contatado ? 'done' : ''}" onclick="toggleContatado(${r.id})">${r.contatado ? 'Reabrir' : 'Marcar contatado'}</button>
+            <button class="delete-btn" onclick="deleteReserva(${r.id})">Excluir</button>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleContatado(id) {
+  const reservas = getReservas();
+  const r = reservas.find(x => x.id === id);
+  if (r) { r.contatado = !r.contatado; saveReservas(reservas); renderReservasList(); toast(r.contatado ? 'Marcado como contatado' : 'Reaberto'); }
+}
+
+function deleteReserva(id) {
+  if (!confirm('Excluir esta reserva?')) return;
+  saveReservas(getReservas().filter(r => r.id !== id));
+  renderReservasList(); toast('Reserva excluída');
+}
+
+// ── DEFAULTS MEDIA ──
+const DEFAULT_HERO_VIDEOS = [{ id:1, url:'video.mp4', visible:true }];
+const DEFAULT_EXPERIENCE_PHOTOS = [
+  { id:1, url:'fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg', alt:'Chef Raphael Gonzaga', order:1, visible:true },
+  { id:2, url:'fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg', alt:'Raphael na cozinha', order:2, visible:true },
+  { id:3, url:'fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg', alt:'Raphael com gema curada', order:3, visible:true }
+];
+const DEFAULT_GALLERY_PHOTOS = [
+  { id:1, url:'fotos/pratos/d81e855e-c654-4a20-a906-4c5cce47cd57.jpeg', alt:'Preparação', order:1, visible:true },
+  { id:2, url:'fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg', alt:'Chef em ação', order:2, visible:true },
+  { id:3, url:'fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg', alt:'Steak Tartare', order:3, visible:true },
+  { id:4, url:'fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg', alt:'Raphael', order:4, visible:true },
+  { id:5, url:'fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg', alt:'Pappardelle', order:5, visible:true }
+];
+const DEFAULT_CHEF_PHOTO = 'fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg';
+
+function getHeroVideos() { try { return JSON.parse(localStorage.getItem('vlm_hero_videos')) || DEFAULT_HERO_VIDEOS; } catch(e) { return DEFAULT_HERO_VIDEOS; } }
+function saveHeroVideos(arr) { localStorage.setItem('vlm_hero_videos', JSON.stringify(arr)); }
+function getExperiencePhotos() { try { return JSON.parse(localStorage.getItem('vlm_experience_photos')) || DEFAULT_EXPERIENCE_PHOTOS; } catch(e) { return DEFAULT_EXPERIENCE_PHOTOS; } }
+function saveExperiencePhotos(arr) { localStorage.setItem('vlm_experience_photos', JSON.stringify(arr)); }
+function getGalleryPhotos() { try { return JSON.parse(localStorage.getItem('vlm_gallery_photos')) || DEFAULT_GALLERY_PHOTOS; } catch(e) { return DEFAULT_GALLERY_PHOTOS; } }
+function saveGalleryPhotos(arr) { localStorage.setItem('vlm_gallery_photos', JSON.stringify(arr)); }
+
+// ── HERO VIDEOS ──
+function renderHeroList() {
+  const list = document.getElementById('hero-list');
+  const videos = getHeroVideos();
+  if (!videos.length) { list.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Nenhum vídeo cadastrado.</p>'; return; }
+  list.innerHTML = videos.map(v => `
+    <div class="item-card ${v.visible ? '' : 'hidden-item'}" style="display:block;padding:1.25rem;">
+      <video src="${v.url}" controls muted preload="metadata"
+        style="width:100%;max-height:260px;object-fit:cover;display:block;background:#000;margin-bottom:0.9rem;"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      </video>
+      <div style="display:none;padding:0.6rem;background:#fff0ed;color:var(--terra);font-size:0.8rem;margin-bottom:0.9rem;">⚠️ Não foi possível carregar o vídeo. Verifique se a URL/caminho está correto.</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <div style="font-size:0.82rem;color:var(--muted);word-break:break-all;flex:1;">${v.url}${!v.visible ? ' &nbsp;<span class="item-tag" style="background:#eee;color:#999;">Oculto</span>' : ''}</div>
+        <div class="item-actions">
+          <button class="toggle-btn ${v.visible ? 'on' : ''}" title="${v.visible ? 'Ocultar' : 'Mostrar'}" onclick="toggleHeroVideo(${v.id})"></button>
+          <button class="edit-btn" onclick="openHeroModal(${v.id})">Editar</button>
+          <button class="delete-btn" onclick="deleteHeroVideo(${v.id})">Excluir</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleHeroVideo(id) {
+  const vs = getHeroVideos(); const v = vs.find(x => x.id === id);
+  if (v) { v.visible = !v.visible; saveHeroVideos(vs); renderHeroList(); toast(v.visible ? 'Vídeo visível' : 'Vídeo ocultado'); }
+}
+
+function deleteHeroVideo(id) {
+  if (!confirm('Excluir este vídeo?')) return;
+  saveHeroVideos(getHeroVideos().filter(v => v.id !== id));
+  renderHeroList(); toast('Vídeo excluído');
+}
+
+let editingHeroId = null;
+function openHeroModal(id) {
+  editingHeroId = id || null;
+  document.getElementById('hero-modal-title').textContent = id ? 'Editar Vídeo' : 'Novo Vídeo';
+  if (id) {
+    const v = getHeroVideos().find(x => x.id === id);
+    document.getElementById('hero-url').value = v.url;
+    document.getElementById('hero-visible').checked = v.visible;
+  } else {
+    document.getElementById('hero-url').value = '';
+    document.getElementById('hero-visible').checked = true;
+  }
+  document.getElementById('hero-modal-bg').classList.add('open');
+}
+
+function closeHeroModal() { document.getElementById('hero-modal-bg').classList.remove('open'); }
+
+function saveHeroVideo() {
+  const url = document.getElementById('hero-url').value.trim();
+  if (!url) { alert('Informe a URL do vídeo.'); return; }
+  const vs = getHeroVideos();
+  const data = { id: editingHeroId || nextId(vs), url, visible: document.getElementById('hero-visible').checked };
+  if (editingHeroId) { const i = vs.findIndex(x => x.id === editingHeroId); vs[i] = data; }
+  else { vs.push(data); }
+  saveHeroVideos(vs); closeHeroModal(); renderHeroList();
+  toast(editingHeroId ? 'Vídeo atualizado!' : 'Vídeo adicionado!');
+}
+
+// ── FOTOS EXPERIÊNCIA E GALERIA (compartilhado) ──
+let currentMediaType = 'experiencia';
+let editingMediaId = null;
+
+function getMediaData(type) { return type === 'experiencia' ? getExperiencePhotos() : getGalleryPhotos(); }
+function saveMediaData(type, arr) { if (type === 'experiencia') saveExperiencePhotos(arr); else saveGalleryPhotos(arr); }
+
+function renderMediaList(type) {
+  const listId = type === 'experiencia' ? 'experiencia-list' : 'galeria-list';
+  const list = document.getElementById(listId);
+  const photos = getMediaData(type).sort((a,b) => a.order - b.order);
+  if (!photos.length) { list.innerHTML = '<p style="color:var(--muted);font-size:0.9rem;">Nenhuma foto cadastrada.</p>'; return; }
+  list.innerHTML = photos.map(p => `
+    <div class="item-card ${p.visible ? '' : 'hidden-item'}">
+      <div class="item-info" style="display:flex;align-items:center;gap:1rem;">
+        <img src="${p.url}" style="width:72px;height:52px;object-fit:cover;border:1px solid var(--border);" onerror="this.style.display='none'">
+        <div>
+          <div class="item-title" style="font-size:0.9rem;word-break:break-all;">${p.url}</div>
+          <div class="item-meta">${p.alt || ''} · Ordem: ${p.order}${!p.visible ? ' · <span style="color:#999;">Oculto</span>' : ''}</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <div class="order-btns">
+          <button class="order-btn" onclick="moveMedia('${type}', ${p.id}, -1)">▲</button>
+          <button class="order-btn" onclick="moveMedia('${type}', ${p.id}, 1)">▼</button>
+        </div>
+        <button class="toggle-btn ${p.visible ? 'on' : ''}" onclick="toggleMedia('${type}', ${p.id})"></button>
+        <button class="edit-btn" onclick="openMediaModal('${type}', ${p.id})">Editar</button>
+        <button class="delete-btn" onclick="deleteMedia('${type}', ${p.id})">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderExperienciaList() { renderMediaList('experiencia'); }
+function renderGaleriaList() { renderMediaList('galeria'); }
+
+function toggleMedia(type, id) {
+  const arr = getMediaData(type); const p = arr.find(x => x.id === id);
+  if (p) { p.visible = !p.visible; saveMediaData(type, arr); renderMediaList(type); toast(p.visible ? 'Foto visível' : 'Foto ocultada'); }
+}
+
+function deleteMedia(type, id) {
+  if (!confirm('Excluir esta foto?')) return;
+  saveMediaData(type, getMediaData(type).filter(p => p.id !== id));
+  renderMediaList(type); toast('Foto excluída');
+}
+
+function moveMedia(type, id, dir) {
+  const arr = getMediaData(type).sort((a,b) => a.order - b.order);
+  const idx = arr.findIndex(p => p.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= arr.length) return;
+  const tmp = arr[idx].order; arr[idx].order = arr[newIdx].order; arr[newIdx].order = tmp;
+  saveMediaData(type, arr); renderMediaList(type);
+}
+
+function openMediaModal(type, id) {
+  currentMediaType = type;
+  editingMediaId = id || null;
+  const label = type === 'experiencia' ? 'Foto — A Experiência' : 'Foto — Edições Anteriores';
+  document.getElementById('media-modal-title').textContent = id ? `Editar ${label}` : `Nova ${label}`;
+  document.getElementById('media-type').value = type;
+  document.getElementById('media-img-preview').classList.remove('show');
+  if (id) {
+    const p = getMediaData(type).find(x => x.id === id);
+    document.getElementById('media-url').value = p.url;
+    document.getElementById('media-alt').value = p.alt || '';
+    document.getElementById('media-visible').checked = p.visible;
+    if (p.url) { const prev = document.getElementById('media-img-preview'); prev.src = p.url; prev.classList.add('show'); }
+  } else {
+    document.getElementById('media-url').value = '';
+    document.getElementById('media-alt').value = '';
+    document.getElementById('media-visible').checked = true;
+  }
+  document.getElementById('media-modal-bg').classList.add('open');
+}
+
+function closeMediaModal() { document.getElementById('media-modal-bg').classList.remove('open'); }
+
+function previewMediaPhoto() {
+  const url = document.getElementById('media-url').value.trim();
+  const preview = document.getElementById('media-img-preview');
+  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+}
+
+function saveMediaPhoto() {
+  const url = document.getElementById('media-url').value.trim();
+  if (!url) { alert('Informe a URL ou caminho da foto.'); return; }
+  const type = document.getElementById('media-type').value;
+  const arr = getMediaData(type);
+  const data = {
+    id: editingMediaId || nextId(arr),
+    url, alt: document.getElementById('media-alt').value.trim(),
+    order: editingMediaId ? arr.find(x => x.id === editingMediaId)?.order : arr.length + 1,
+    visible: document.getElementById('media-visible').checked
+  };
+  if (editingMediaId) { const i = arr.findIndex(x => x.id === editingMediaId); arr[i] = data; }
+  else { arr.push(data); }
+  saveMediaData(type, arr); closeMediaModal(); renderMediaList(type);
+  toast(editingMediaId ? 'Foto atualizada!' : 'Foto adicionada!');
+}
+
+// ── LOGO ──
+function renderLogoPanel() {
+  const src = localStorage.getItem('vlm_logo') || 'fotos/logo/Logo.jpg';
+  const input = document.getElementById('logo-input');
+  const preview = document.getElementById('logo-preview');
+  if (input) input.value = src;
+  if (preview && src) { preview.src = src; preview.classList.add('show'); }
+}
+
+function previewLogo() {
+  const url = document.getElementById('logo-input').value.trim();
+  const preview = document.getElementById('logo-preview');
+  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+}
+
+function saveLogo() {
+  const url = document.getElementById('logo-input').value.trim();
+  if (!url) { alert('Informe a URL ou caminho da logo.'); return; }
+  localStorage.setItem('vlm_logo', url);
+  toast('Logo salva!');
+}
+
+// ── FOTO DO CHEF ──
+function renderChefPanel() {
+  const photo = localStorage.getItem('vlm_chef_photo') || DEFAULT_CHEF_PHOTO;
+  const input = document.getElementById('chef-photo-input');
+  const preview = document.getElementById('chef-photo-preview');
+  if (input) input.value = photo;
+  if (preview && photo) { preview.src = photo; preview.classList.add('show'); }
+}
+
+function previewChefPhoto() {
+  const url = document.getElementById('chef-photo-input').value.trim();
+  const preview = document.getElementById('chef-photo-preview');
+  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+}
+
+function saveChefPhoto() {
+  const url = document.getElementById('chef-photo-input').value.trim();
+  if (!url) { alert('Informe a URL ou caminho da foto.'); return; }
+  localStorage.setItem('vlm_chef_photo', url);
+  toast('Foto do chef salva!');
+}
+
+// ── TEXTOS ──
+const TEXTO_SCHEMA = [
+  { section: 'Hero', fields: [
+    { key:'hero_eyebrow',    label:'Eyebrow (acima do título)', max:60 },
+    { key:'hero_title_1',    label:'Título — linha 1', max:30 },
+    { key:'hero_title_em',   label:'Título — palavra em destaque dourado', max:20 },
+    { key:'hero_title_3',    label:'Título — linha 3', max:30 },
+    { key:'hero_subtitle',   label:'Subtítulo', max:80 },
+    { key:'hero_cta',        label:'Botão CTA', max:40 },
+  ]},
+  { section: 'A Experiência', fields: [
+    { key:'exp_label',       label:'Nome da seção', max:40 },
+    { key:'exp_title',       label:'Título — linha 1', max:60 },
+    { key:'exp_title_em',    label:'Título — trecho em destaque', max:40 },
+    { key:'exp_p1',          label:'Parágrafo 1', max:300, multiline:true },
+    { key:'exp_p2',          label:'Parágrafo 2', max:300, multiline:true },
+    { key:'exp_p3',          label:'Parágrafo 3', max:300, multiline:true },
+    { key:'exp_quote',       label:'Citação', max:150, multiline:true },
+    { key:'exp_stat1_num',   label:'Estatística 1 — número', max:8 },
+    { key:'exp_stat1_label', label:'Estatística 1 — descrição', max:40 },
+    { key:'exp_stat2_num',   label:'Estatística 2 — número', max:8 },
+    { key:'exp_stat2_label', label:'Estatística 2 — descrição', max:40 },
+    { key:'exp_stat3_num',   label:'Estatística 3 — número', max:8 },
+    { key:'exp_stat3_label', label:'Estatística 3 — descrição', max:40 },
+  ]},
+  { section: 'Próximos Eventos', fields: [
+    { key:'eventos_label',    label:'Nome da seção', max:40 },
+    { key:'eventos_title',    label:'Título', max:60 },
+    { key:'eventos_subtitle', label:'Subtítulo', max:200, multiline:true },
+  ]},
+  { section: 'Cardápio', fields: [
+    { key:'cardapio_label', label:'Nome da seção', max:40 },
+    { key:'cardapio_title', label:'Título', max:60 },
+    { key:'cardapio_intro', label:'Texto introdutório', max:200, multiline:true },
+  ]},
+  { section: 'O Chef', fields: [
+    { key:'chef_label',     label:'Nome da seção', max:40 },
+    { key:'chef_name',      label:'Nome do chef', max:50 },
+    { key:'chef_role',      label:'Cargo/função', max:50 },
+    { key:'chef_p1',        label:'Parágrafo 1', max:300, multiline:true },
+    { key:'chef_p2',        label:'Parágrafo 2', max:300, multiline:true },
+    { key:'chef_p3',        label:'Parágrafo 3', max:300, multiline:true },
+    { key:'chef_quote',     label:'Citação', max:200, multiline:true },
+    { key:'chef_signature', label:'Assinatura', max:50 },
+  ]},
+  { section: 'Edições Anteriores', fields: [
+    { key:'galeria_label', label:'Nome da seção', max:40 },
+    { key:'galeria_title', label:'Título', max:60 },
+  ]},
+  { section: 'Como Funciona', fields: [
+    { key:'como_label',   label:'Nome da seção', max:40 },
+    { key:'como_title',   label:'Título', max:60 },
+    { key:'como_s1_title',label:'Passo 1 — título', max:40 },
+    { key:'como_s1_desc', label:'Passo 1 — descrição', max:150, multiline:true },
+    { key:'como_s2_title',label:'Passo 2 — título', max:40 },
+    { key:'como_s2_desc', label:'Passo 2 — descrição', max:150, multiline:true },
+    { key:'como_s3_title',label:'Passo 3 — título', max:40 },
+    { key:'como_s3_desc', label:'Passo 3 — descrição', max:150, multiline:true },
+    { key:'como_s4_title',label:'Passo 4 — título', max:40 },
+    { key:'como_s4_desc', label:'Passo 4 — descrição', max:150, multiline:true },
+  ]},
+  { section: 'Reserva (CTA Final)', fields: [
+    { key:'reserva_label',    label:'Nome da seção', max:40 },
+    { key:'reserva_title_1',  label:'Título — linha 1', max:40 },
+    { key:'reserva_title_em', label:'Título — palavra em destaque', max:30 },
+    { key:'reserva_p',        label:'Texto', max:250, multiline:true },
+  ]},
+  { section: 'Rodapé', fields: [
+    { key:'footer_tagline', label:'Tagline', max:60 },
+  ]},
+];
+
+const DEFAULT_TEXTO_VALUES = {
+  hero_eyebrow:'Experiência Gastronômica Exclusiva', hero_title_1:'Uma noite que', hero_title_em:'nunca', hero_title_3:'vai esquecer', hero_subtitle:'Cozinha que reúne. Histórias que ficam.', hero_cta:'Ver Próximos Eventos',
+  exp_label:'A Experiência', exp_title:'Não é um restaurante.', exp_title_em:'momento único.', exp_p1:'Viva La Mesa é um jantar íntimo e exclusivo, criado para um grupo seleto de pessoas que buscam mais do que uma refeição. Aqui, cada detalhe é pensado para criar uma experiência sensorial completa — do aroma ao sabor, da mesa à memória.', exp_p2:'O formato é simples e revolucionário: datas abertas por calendário, vagas limitadas a 12 convidados, cardápio revelado na véspera. Você reserva seu lugar, o Chef Raphael Gonzaga cuida de tudo o mais.', exp_p3:'Água com e sem gás estão incluídas. As bebidas alcóolicas ficam por conta dos convidados, tornando a noite ainda mais personalizada e intimista.', exp_quote:'"Tenho o prazer de receber você\nem uma noite especial."', exp_stat1_num:'12', exp_stat1_label:'Convidados por noite', exp_stat2_num:'3', exp_stat2_label:'Tempos do menu', exp_stat3_num:'100%', exp_stat3_label:'Exclusivo',
+  eventos_label:'Calendário', eventos_title:'Próximos Eventos', eventos_subtitle:'As vagas são limitadas e preenchidas por ordem de reserva.\nNão deixe passar.',
+  cardapio_label:'Os Pratos', cardapio_title:'Cada detalhe, uma emoção', cardapio_intro:'O cardápio muda a cada edição. O que nunca muda é o cuidado com cada ingrediente e a paixão com que cada prato é criado.',
+  chef_label:'O Criador', chef_name:'Raphael Gonzaga', chef_role:'Chef & Anfitrião', chef_p1:'Raphael Gonzaga é o coração e a alma por trás do Viva La Mesa. Com uma cozinha que combina técnica apurada, criatividade e autenticidade, ele transforma cada jantar em uma experiência única e inesquecível.', chef_p2:'Apaixonado por ingredientes frescos e por criar conexões reais à mesa, Raphael não apenas cozinha — ele cria o ambiente perfeito para que histórias aconteçam. Cada detalhe é pensado com precisão e carinho, do mise en place ao momento da sobremesa.', chef_p3:'O Viva La Mesa nasceu do desejo genuíno de oferecer algo que os restaurantes tradicionais raramente conseguem: intimidade verdadeira, exclusividade e uma relação autêntica entre o chef e seus convidados.', chef_quote:'"Cozinhar é minha forma de dizer que me importo. Cada prato carrega uma intenção, cada noite é uma história nova."', chef_signature:'Raphael Gonzaga',
+  galeria_label:'Memórias', galeria_title:'Edições Anteriores',
+  como_label:'O Ritual', como_title:'Como Funciona', como_s1_title:'Escolha a Data', como_s1_desc:'Consulte o calendário de eventos e escolha a data e cidade que fazem sentido para você.', como_s2_title:'Reserve sua Vaga', como_s2_desc:'Vagas limitadas a 12 convidados por noite. Confirme sua reserva e aguarde o contato do Chef.', como_s3_title:'Cardápio Revelado', como_s3_desc:'Na véspera do jantar, você recebe o cardápio completo e todos os detalhes da noite especial.', como_s4_title:'Viva a Experiência', como_s4_desc:'Chegue, relaxe e entregue-se. O Chef Raphael cuida de absolutamente tudo. Uma noite para lembrar.',
+  reserva_label:'Reserve Agora', reserva_title_1:'Sua mesa', reserva_title_em:'esperando', reserva_p:'As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.',
+  footer_tagline:'Chef Raphael Gonzaga',
+};
+
+function getStoredTexts() { try { return JSON.parse(localStorage.getItem('vlm_texts') || '{}'); } catch(e) { return {}; } }
+function getTextValue(key) { const stored = getStoredTexts(); return stored[key] !== undefined ? stored[key] : (DEFAULT_TEXTO_VALUES[key] || ''); }
+
+function renderTextosPanel() {
+  const container = document.getElementById('textos-container');
+  if (!container) return;
+  const stored = getStoredTexts();
+  container.innerHTML = TEXTO_SCHEMA.map(section => `
+    <div class="texto-section">
+      <div class="texto-section-header">${section.section}</div>
+      ${section.fields.map(f => {
+        const val = stored[f.key] !== undefined ? stored[f.key] : (DEFAULT_TEXTO_VALUES[f.key] || '');
+        const remaining = f.max - val.length;
+        const tag = f.multiline ? 'textarea' : 'input';
+        const attrs = f.multiline ? 'rows="3"' : 'type="text"';
+        const escapedVal = val.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        return '<div class="texto-field">' +
+          '<div class="texto-field-header">' +
+          '<span class="texto-field-label">' + f.label + '</span>' +
+          '<span class="texto-char-count' + (remaining < 20 ? ' warn' : '') + '" id="cc-' + f.key + '">' + remaining + ' restantes</span>' +
+          '</div>' +
+          (f.multiline
+            ? '<textarea ' + attrs + ' id="tk-' + f.key + '" maxlength="' + f.max + '" oninput="updateCharCount(\'' + f.key + '\',' + f.max + ',this.value)">' + escapedVal + '</textarea>'
+            : '<input ' + attrs + ' id="tk-' + f.key + '" maxlength="' + f.max + '" value="' + escapedVal + '" oninput="updateCharCount(\'' + f.key + '\',' + f.max + ',this.value)">') +
+          '</div>';
+      }).join('')}
+    </div>`).join('');
+}
+
+function updateCharCount(key, max, val) {
+  const el = document.getElementById('cc-' + key);
+  if (!el) return;
+  const remaining = max - val.length;
+  el.textContent = remaining + ' restantes';
+  el.className = 'texto-char-count' + (remaining < 20 ? ' warn' : '');
+}
+
+function saveTexts() {
+  const stored = getStoredTexts();
+  TEXTO_SCHEMA.forEach(section => {
+    section.fields.forEach(f => {
+      const el = document.getElementById('tk-' + f.key);
+      if (el) stored[f.key] = el.value;
+    });
+  });
+  localStorage.setItem('vlm_texts', JSON.stringify(stored));
+  toast('Textos salvos! Recarregue o site para ver as mudanças.');
+}
+
+// ── MÚSICA ──
+function renderMusicPanel() {
+  const current = localStorage.getItem('vlm_music') || 'jazz.mp3';
+  const input = document.getElementById('music-input');
+  if (input) {
+    input.value = current;
+    updateMusicPreview(current);
+  }
+}
+
+function previewMusic() {
+  const url = document.getElementById('music-input').value.trim();
+  updateMusicPreview(url);
+}
+
+function updateMusicPreview(url) {
+  const wrap = document.getElementById('music-preview-wrap');
+  const player = document.getElementById('music-preview-player');
+  const src = document.getElementById('music-preview-src');
+  if (!url) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  src.setAttribute('src', url);
+  player.load();
+}
+
+function saveMusic() {
+  const url = document.getElementById('music-input').value.trim();
+  if (!url) { alert('Informe a URL ou caminho do arquivo MP3.'); return; }
+  localStorage.setItem('vlm_music', url);
+  toast('Música salva! Recarregue o site para ouvir.');
+}
+</script>
+</body>
+</html>

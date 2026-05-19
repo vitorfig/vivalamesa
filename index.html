@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viva La Mesa — Experiência Gastronômica Exclusiva</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FAF7F0;
+            --cream-dark: #EDE8DF;
+            --green-dark: #1E2E1E;
+            --green-mid: #2D4428;
+            --gold: #B8922A;
+            --gold-light: #D4AF5C;
+            --gold-pale: #EED99A;
+            --terra: #8B4A35;
+            --text-dark: #1A1A1A;
+            --text-mid: #555;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; }
+
+        .section-label {
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        /* ============================
+           NAVIGATION
+           ============================ */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.8rem 3.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.5s, padding 0.4s, box-shadow 0.4s;
+        }
+
+        nav.scrolled {
+            background: rgba(20, 30, 20, 0.97);
+            padding: 1.1rem 3.5rem;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.4);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-logo {
+            height: 60px;
+            transition: all 0.3s;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.73rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--gold-light); }
+
+        .nav-reserve {
+            border: 1px solid var(--gold-light);
+            color: var(--gold-light) !important;
+            padding: 0.55rem 1.5rem;
+            transition: all 0.3s !important;
+        }
+
+        .nav-reserve:hover {
+            background: var(--gold) !important;
+            color: white !important;
+            border-color: var(--gold) !important;
+        }
+
+        /* ============================
+           HERO
+           ============================ */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 650px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                160deg,
+                rgba(10,18,10,0.72) 0%,
+                rgba(20,32,20,0.45) 45%,
+                rgba(10,18,10,0.8) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            max-width: 920px;
+            padding: 0 2rem;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 1.2s 0.4s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        .hero-title {
+            font-size: clamp(3.8rem, 9vw, 7.5rem);
+            font-weight: 300;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.8rem;
+            opacity: 0;
+            animation: fadeUp 1.2s 0.7s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
+
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.55rem);
+            font-weight: 300;
+            font-style: italic;
+            color: rgba(255,255,255,0.78);
+            margin-bottom: 3.5rem;
+            opacity: 0;
+            animation: fadeUp 1.2s 1s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            background: var(--gold);
+            color: white;
+            text-decoration: none;
+            padding: 1.15rem 3.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            transition: all 0.35s;
+            opacity: 0;
+            animation: fadeUp 1.2s 1.3s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        .hero-cta:hover {
+            background: var(--gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            opacity: 0;
+            animation: fadeIn 1s 2.2s forwards;
+        }
+
+        .hero-scroll span {
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 55px;
+            background: linear-gradient(to bottom, rgba(212,175,92,0.8), transparent);
+            animation: scrollPulse 2.2s ease-in-out infinite;
+        }
+
+        /* ============================
+           INTRO OVERLAY
+           ============================ */
+        .intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: var(--green-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2.5rem;
+            cursor: pointer;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        .intro-overlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .intro-overlay img {
+            height: 140px;
+            animation: fadeUp 1.2s 0.3s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .intro-enter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeUp 1.2s 0.9s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        .intro-enter span {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .intro-enter-btn {
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            padding: 1rem 3rem;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.35s;
+        }
+
+        .intro-enter-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        .intro-note {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.1em;
+            animation: fadeIn 1s 1.5s both;
+        }
+
+        .intro-note svg { opacity: 0.5; }
+
+        /* ============================
+           MUSIC BUTTON
+           ============================ */
+        .music-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 200;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: rgba(30,46,30,0.95);
+            border: 1px solid var(--gold);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+        }
+
+        .music-btn:hover { background: var(--gold); transform: scale(1.08); }
+
+        .music-btn.paused {
+            animation: pulseBtn 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { box-shadow: 0 6px 25px rgba(0,0,0,0.35), 0 0 0 0 rgba(184,146,42,0.5); }
+            50%       { box-shadow: 0 6px 25px rgba(0,0,0,0.35), 0 0 0 10px rgba(184,146,42,0); }
+        }
+
+        .music-bars {
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 18px;
+        }
+
+        .music-bars span {
+            width: 3px;
+            background: white;
+            border-radius: 2px;
+            transform-origin: bottom;
+            animation: musicBar 0.75s ease-in-out infinite alternate;
+        }
+
+        .music-bars span:nth-child(1) { height: 8px;  animation-delay: 0s;    }
+        .music-bars span:nth-child(2) { height: 16px; animation-delay: 0.18s; }
+        .music-bars span:nth-child(3) { height: 10px; animation-delay: 0.32s; }
+        .music-bars span:nth-child(4) { height: 14px; animation-delay: 0.08s; }
+
+        .music-btn.paused .music-bars span {
+            animation-play-state: paused;
+            opacity: 0.45;
+        }
+
+        /* ============================
+           SECTIONS GENERAL
+           ============================ */
+        section { padding: 6.5rem 0; }
+
+        .container {
+            max-width: 1220px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4.5rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 400;
+            color: var(--green-dark);
+            margin-top: 0.8rem;
+            line-height: 1.1;
+        }
+
+        .gold-divider {
+            width: 55px;
+            height: 1px;
+            background: var(--gold);
+            margin: 1.5rem auto;
+        }
+
+        .gold-divider-wide {
+            width: 130px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin: 1.5rem auto;
+        }
+
+        /* ============================
+           MANIFESTO / EXPERIÊNCIA
+           ============================ */
+        .manifesto {
+            background: var(--green-dark);
+            color: white;
+            padding: 7.5rem 0;
+        }
+
+        .manifesto-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5.5rem;
+            align-items: center;
+        }
+
+        .manifesto-text h2 {
+            font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+            font-weight: 300;
+            line-height: 1.15;
+            color: white;
+            margin: 0.8rem 0 2rem;
+        }
+
+        .manifesto-text h2 em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
+
+        .manifesto-text p {
+            font-size: 0.97rem;
+            line-height: 1.9;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .manifesto-quote {
+            border-left: 2px solid var(--gold);
+            padding-left: 1.8rem;
+            margin: 2.5rem 0;
+        }
+
+        .manifesto-quote blockquote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.45rem;
+            font-style: italic;
+            color: var(--gold-light);
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        .manifesto-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            margin-top: 3rem;
+            border: 1px solid rgba(196,150,42,0.25);
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-right: 1px solid rgba(196,150,42,0.25);
+        }
+
+        .stat:last-child { border-right: none; }
+
+        .stat-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.6rem;
+            font-weight: 300;
+            color: var(--gold-light);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            margin-top: 0.4rem;
+            display: block;
+        }
+
+        .manifesto-image {
+            position: relative;
+        }
+
+        .manifesto-image::before {
+            content: '';
+            position: absolute;
+            top: -18px; left: -18px;
+            right: 18px; bottom: 18px;
+            border: 1px solid rgba(196,150,42,0.5);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Carousel */
+        .rapha-carousel {
+            position: relative;
+            width: 100%;
+            height: 580px;
+            overflow: hidden;
+        }
+
+        .rapha-carousel-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .rapha-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .rapha-slide.active { opacity: 1; }
+
+        .rapha-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+        }
+
+        .rapha-dots {
+            position: absolute;
+            bottom: 1.2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.6rem;
+            z-index: 10;
+        }
+
+        .rapha-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            border: 1px solid rgba(212,175,92,0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .rapha-dot.active {
+            background: var(--gold-light);
+            border-color: var(--gold-light);
+            transform: scale(1.2);
+        }
+
+        /* ============================
+           EVENTOS
+           ============================ */
+        .eventos { background: var(--cream); }
+
+        .eventos-grid { display: grid; gap: 1.2rem; }
+
+        .evento-card {
+            background: white;
+            border: 1px solid var(--cream-dark);
+            display: grid;
+            grid-template-columns: 130px 1fr auto;
+            overflow: hidden;
+            transition: box-shadow 0.35s, transform 0.35s;
+            position: relative;
+        }
+
+        .evento-card:hover {
+            box-shadow: 0 12px 50px rgba(0,0,0,0.09);
+            transform: translateY(-3px);
+        }
+
+        .evento-card.urgente::before {
+            content: 'ÚLTIMA VAGA';
+            position: absolute;
+            top: 0; right: 0;
+            background: var(--terra);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            padding: 0.28rem 0.8rem;
+            z-index: 2;
+        }
+
+        .evento-date-block {
+            background: var(--green-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        .evento-day {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.4rem;
+            font-weight: 300;
+            line-height: 1;
+            color: var(--gold-light);
+        }
+
+        .evento-month {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.65);
+            margin-top: 0.2rem;
+        }
+
+        .evento-weekday {
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.38);
+            margin-top: 0.35rem;
+        }
+
+        .evento-info {
+            padding: 1.8rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+
+        .evento-location {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+
+        .evento-menu-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.55rem;
+            font-weight: 500;
+            color: var(--green-dark);
+            line-height: 1.2;
+        }
+
+        .evento-pratos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .prato-tag {
+            font-size: 0.68rem;
+            padding: 0.22rem 0.7rem;
+            border: 1px solid var(--cream-dark);
+            color: var(--text-mid);
+            background: var(--cream);
+            border-radius: 2px;
+        }
+
+        .evento-right {
+            padding: 1.8rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 0.9rem;
+            border-left: 1px solid var(--cream-dark);
+            min-width: 195px;
+        }
+
+        .evento-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--green-dark);
+            line-height: 1;
+        }
+
+        .evento-price small {
+            font-size: 0.8rem;
+            font-family: 'Raleway', sans-serif;
+            color: var(--text-mid);
+            font-weight: 400;
+        }
+
+        .vagas-badge {
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 0.32rem 0.85rem;
+            border-radius: 30px;
+        }
+
+        .vagas-badge.critico {
+            background: #FFF0ED;
+            color: var(--terra);
+            border: 1px solid #F5C4B8;
+        }
+
+        .vagas-badge.normal {
+            background: #EEF5EE;
+            color: var(--green-mid);
+            border: 1px solid #B5D4B5;
+        }
+
+        .btn-reservar {
+            background: var(--green-dark);
+            color: white;
+            border: none;
+            padding: 0.72rem 1.5rem;
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-reservar:hover {
+            background: var(--gold);
+            transform: translateY(-1px);
+        }
+
+        /* ============================
+           CARDÁPIO / PRATOS
+           ============================ */
+        .cardapio {
+            background: var(--green-dark);
+            padding: 7.5rem 0 0;
+        }
+
+        .cardapio .section-header h2 { color: white; }
+        .cardapio .gold-divider-wide { background: linear-gradient(to right, transparent, rgba(212,175,92,0.7), transparent); }
+
+        .cardapio-intro {
+            text-align: center;
+            max-width: 580px;
+            margin: 0 auto 4rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.75;
+        }
+
+        .pratos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+        }
+
+        .prato-item {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            cursor: pointer;
+        }
+
+        .prato-item.large {
+            grid-column: span 1;
+            aspect-ratio: 3/4;
+            height: auto;
+        }
+
+        .prato-item.dark-card {
+            background: #1A2A1A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prato-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(.22,1,.36,1);
+        }
+
+        .prato-item:hover img { transform: scale(1.07); }
+
+        .prato-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,20,10,0.95) 0%, rgba(10,20,10,0.25) 55%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.2rem 1.8rem;
+            transition: background 0.5s;
+        }
+
+        .prato-item:hover .prato-overlay {
+            background: linear-gradient(to top, rgba(10,20,10,1) 0%, rgba(10,20,10,0.6) 65%, rgba(10,20,10,0.15) 100%);
+        }
+
+        .dark-card-content {
+            text-align: center;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .prato-category {
+            font-size: 0.63rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--gold-light);
+            margin-bottom: 0.4rem;
+        }
+
+        .prato-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.55rem;
+            font-weight: 400;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 0.7rem;
+        }
+
+        .prato-desc {
+            font-size: 0.83rem;
+            color: rgba(255,255,255,0.58);
+            line-height: 1.65;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s;
+        }
+
+        .prato-item:hover .prato-desc { max-height: 90px; }
+        .dark-card .prato-desc { max-height: 90px; }
+
+        /* ============================
+           CHEF
+           ============================ */
+        .chef { background: var(--cream); }
+
+        .chef-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5.5rem;
+            align-items: start;
+        }
+
+        .chef-photos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .chef-photo-main {
+            grid-column: 1 / -1;
+        }
+
+        .chef-photo-main img {
+            width: 100%;
+            height: auto;
+            max-height: none;
+            object-fit: contain;
+            display: block;
+        }
+
+        .chef-photos .chef-sub img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+        }
+
+        .chef-text { padding-top: 0.5rem; }
+
+        .chef-name {
+            font-size: clamp(2.4rem, 4vw, 3.2rem);
+            font-weight: 400;
+            color: var(--green-dark);
+            line-height: 1.1;
+            margin: 0.8rem 0 1.8rem;
+        }
+
+        .chef-name em {
+            display: block;
+            font-style: italic;
+            color: var(--gold);
+            font-size: 0.55em;
+            margin-top: 0.3rem;
+        }
+
+        .chef-text p {
+            font-size: 0.97rem;
+            line-height: 1.9;
+            color: var(--text-mid);
+            margin-bottom: 1.5rem;
+        }
+
+        .chef-quote {
+            border-left: 2px solid var(--gold);
+            padding-left: 1.8rem;
+            margin: 2.5rem 0;
+        }
+
+        .chef-quote blockquote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-style: italic;
+            color: var(--green-dark);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .chef-signature {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            font-style: italic;
+            color: var(--green-dark);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--cream-dark);
+            opacity: 0.6;
+        }
+
+        /* ============================
+           GALERIA STRIP
+           ============================ */
+        .galeria { background: var(--cream-dark); overflow: hidden; }
+
+        .galeria-strip {
+            display: flex;
+            gap: 3px;
+        }
+
+        .galeria-strip img {
+            flex: 1;
+            height: 380px;
+            object-fit: cover;
+            transition: flex 0.55s cubic-bezier(.22,1,.36,1);
+            cursor: pointer;
+        }
+
+        .galeria-strip img:hover { flex: 2.8; }
+
+        /* ============================
+           COMO FUNCIONA
+           ============================ */
+        .como-funciona { background: var(--cream); }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 2.75rem;
+            right: -1.25rem;
+            width: 2.5rem;
+            height: 1px;
+            background: var(--gold-pale);
+        }
+
+        .step:last-child::after { display: none; }
+
+        .step-number {
+            width: 58px;
+            height: 58px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.6rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            transition: all 0.3s;
+        }
+
+        .step:hover .step-number {
+            background: var(--gold);
+            color: white;
+        }
+
+        .step h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--green-dark);
+            margin-bottom: 0.85rem;
+        }
+
+        .step p {
+            font-size: 0.87rem;
+            color: var(--text-mid);
+            line-height: 1.75;
+        }
+
+        /* ============================
+           RESERVA CTA
+           ============================ */
+        .reserva {
+            background: var(--green-dark);
+            padding: 9rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reserva::before {
+            content: 'VIVA';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 25vw;
+            font-weight: 700;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .reserva-content {
+            max-width: 680px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reserva h2 {
+            font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+            font-weight: 300;
+            color: white;
+            margin: 0.8rem 0 1.8rem;
+            line-height: 1.1;
+        }
+
+        .reserva h2 em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
+
+        .reserva p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.97rem;
+            line-height: 1.8;
+            margin-bottom: 3.5rem;
+        }
+
+        .reserva-actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--gold);
+            color: white;
+            text-decoration: none;
+            padding: 1.15rem 3.5rem;
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            transition: all 0.35s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: white;
+            text-decoration: none;
+            padding: 1.15rem 3.5rem;
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.35);
+            transition: all 0.35s;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold-light);
+            color: var(--gold-light);
+            transform: translateY(-3px);
+        }
+
+        /* ============================
+           MODAL
+           ============================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 500;
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            max-width: 530px;
+            width: 100%;
+            padding: 3.5rem;
+            position: relative;
+            animation: fadeUp 0.4s cubic-bezier(.22,1,.36,1) forwards;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem; right: 1.8rem;
+            background: none; border: none;
+            font-size: 1.6rem; cursor: pointer;
+            color: #aaa; line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover { color: var(--text-dark); }
+
+        .modal h3 {
+            font-size: 2.1rem;
+            color: var(--green-dark);
+            margin-bottom: 0.4rem;
+        }
+
+        .modal-subtitle {
+            color: var(--gold);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-mid);
+            margin-bottom: 0.45rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 1px solid #E0E0E0;
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.92rem;
+            color: var(--text-dark);
+            background: white;
+            outline: none;
+            transition: border 0.3s;
+            appearance: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus { border-color: var(--gold); }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        .form-success {
+            text-align: center;
+            padding: 2rem 0;
+            display: none;
+        }
+
+        .form-success h4 {
+            font-size: 1.6rem;
+            color: var(--green-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-success p { color: var(--text-mid); font-size: 0.9rem; line-height: 1.7; }
+
+        /* ============================
+           FOOTER
+           ============================ */
+        footer {
+            background: #0E160E;
+            color: rgba(255,255,255,0.45);
+            padding: 5rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            height: 70px;
+            margin-bottom: 1.8rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.87rem;
+            line-height: 1.8;
+            max-width: 300px;
+        }
+
+        footer h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            margin-bottom: 1.4rem;
+            font-weight: 400;
+        }
+
+        footer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        footer ul a {
+            color: rgba(255,255,255,0.45);
+            text-decoration: none;
+            font-size: 0.87rem;
+            transition: color 0.3s;
+        }
+
+        footer ul a:hover { color: var(--gold-light); }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.77rem;
+        }
+
+        .footer-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.95rem;
+        }
+
+        /* ============================
+           ANIMATIONS
+           ============================ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(35px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.7; transform: scaleY(1); }
+            50%       { opacity: 0.2; transform: scaleY(0.7); }
+        }
+
+        @keyframes musicBar {
+            from { transform: scaleY(0.35); }
+            to   { transform: scaleY(1); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(45px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================
+           RESPONSIVE
+           ============================ */
+        @media (max-width: 960px) {
+            nav { padding: 1.2rem 2rem; }
+            nav.scrolled { padding: 1rem 2rem; }
+            .nav-links { display: none; }
+
+            .manifesto-grid,
+            .chef-grid { grid-template-columns: 1fr; gap: 3rem; }
+
+            .manifesto-image::before { display: none; }
+            .manifesto-image img { height: 420px; }
+
+            .pratos-grid { grid-template-columns: 1fr 1fr; }
+            .prato-item.large { grid-column: span 1; aspect-ratio: 3/4; height: auto; }
+
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .step::after { display: none; }
+
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .footer-brand { grid-column: 1 / -1; }
+
+            .evento-card {
+                display: flex;
+                flex-direction: column;
+            }
+            .evento-date-block {
+                flex-direction: row;
+                gap: 1.2rem;
+                padding: 1.2rem 1.5rem;
+                justify-content: flex-start;
+                align-items: center;
+            }
+            .evento-info { padding: 1.2rem 1.5rem; }
+            .evento-right {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                border-left: none;
+                border-top: 1px solid var(--cream-dark);
+                padding: 1rem 1.5rem;
+                min-width: unset;
+            }
+            .evento-price { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 620px) {
+            section { padding: 4.5rem 0; }
+            .pratos-grid { grid-template-columns: 1fr; }
+            .prato-item.large { grid-column: span 1; aspect-ratio: 4/3; height: auto; }
+            .chef-photos { grid-template-columns: 1fr; }
+            .chef-photo-main { grid-column: auto; }
+            .galeria-strip { flex-direction: column; }
+            .galeria-strip img { height: 200px; flex: unset; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 0.75rem; text-align: center; }
+            .evento-card { display: flex; flex-direction: column; }
+            .modal { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<audio id="jazz-audio" loop preload="auto" autoplay>
+    <source id="jazz-src" src="jazz.mp3" type="audio/mpeg">
+</audio>
+
+<!-- INTRO OVERLAY -->
+
+<!-- BOTÃO MÚSICA -->
+<button class="music-btn paused" id="music-toggle" title="Tocar Jazz">
+    <div class="music-bars">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</button>
+
+<!-- ========================================================
+     NAVEGAÇÃO
+     ======================================================== -->
+<nav id="navbar">
+    <img src="fotos/logo/Logo.jpg" alt="Viva La Mesa" class="nav-logo" id="nav-logo">
+    <ul class="nav-links">
+        <li><a href="#experiencia">A Experiência</a></li>
+        <li><a href="#eventos">Próximos Eventos</a></li>
+        <li><a href="#cardapio">Cardápio</a></li>
+        <li><a href="#chef">O Chef</a></li>
+        <li><a href="#eventos" class="nav-reserve">Reservar Mesa</a></li>
+    </ul>
+</nav>
+
+<!-- ========================================================
+     HERO
+     ======================================================== -->
+<section class="hero" id="inicio">
+    <video class="hero-video" id="hero-video" autoplay muted playsinline poster="fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg">
+        <source src="video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <p class="hero-eyebrow" data-tk="hero_eyebrow">Experiência Gastronômica Exclusiva</p>
+        <h1 class="hero-title">
+            <span data-tk="hero_title_1">Uma noite que</span><br><span data-tk="hero_title_2">você </span><em data-tk="hero_title_em">nunca</em><br><span data-tk="hero_title_3">vai esquecer</span>
+        </h1>
+        <p class="hero-subtitle" data-tk="hero_subtitle">Cozinha que reúne. Histórias que ficam.</p>
+        <a href="#eventos" class="hero-cta" data-tk="hero_cta">Ver Próximos Eventos</a>
+    </div>
+    <div class="hero-scroll">
+        <span>Descubra</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- ========================================================
+     MANIFESTO / A EXPERIÊNCIA
+     ======================================================== -->
+<section class="manifesto" id="experiencia">
+    <div class="container">
+        <div class="manifesto-grid">
+            <div class="manifesto-text reveal">
+                <span class="section-label" data-tk="exp_label">A Experiência</span>
+                <h2><span data-tk="exp_title">Não é um restaurante.</span><br>É um <em data-tk="exp_title_em">momento único.</em></h2>
+                <p data-tk="exp_p1">Viva La Mesa é um jantar íntimo e exclusivo, criado para um grupo seleto de pessoas que buscam mais do que uma refeição. Aqui, cada detalhe é pensado para criar uma experiência sensorial completa — do aroma ao sabor, da mesa à memória.</p>
+                <p data-tk="exp_p2">O formato é simples e revolucionário: datas abertas por calendário, vagas limitadas a 12 convidados, cardápio revelado na véspera. Você reserva seu lugar, o Chef Raphael Gonzaga cuida de tudo o mais.</p>
+                <p data-tk="exp_p3">Água com e sem gás estão incluídas. As bebidas alcóolicas ficam por conta dos convidados, tornando a noite ainda mais personalizada e intimista.</p>
+                <div class="manifesto-quote">
+                    <blockquote data-tk="exp_quote">"Tenho o prazer de receber você<br>em uma noite especial."</blockquote>
+                </div>
+                <div class="manifesto-stats">
+                    <div class="stat">
+                        <span class="stat-number" data-tk="exp_stat1_num">12</span>
+                        <span class="stat-label" data-tk="exp_stat1_label">Convidados por noite</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-tk="exp_stat2_num">3</span>
+                        <span class="stat-label" data-tk="exp_stat2_label">Tempos do menu</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-tk="exp_stat3_num">100%</span>
+                        <span class="stat-label" data-tk="exp_stat3_label">Exclusivo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="manifesto-image reveal">
+                <div class="rapha-carousel" id="rapha-carousel">
+                    <div class="rapha-carousel-inner" id="rapha-carousel-inner"></div>
+                    <div class="rapha-dots" id="rapha-dots"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     PRÓXIMOS EVENTOS
+     ======================================================== -->
+<section class="eventos" id="eventos">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-tk="eventos_label">Calendário</span>
+            <h2 data-tk="eventos_title">Próximos Eventos</h2>
+            <div class="gold-divider-wide"></div>
+            <p data-tk="eventos_subtitle" style="color: var(--text-mid); max-width: 520px; margin: 0 auto; font-size: 0.94rem; line-height: 1.75;">
+                As vagas são limitadas e preenchidas por ordem de reserva.<br>Não deixe passar.
+            </p>
+        </div>
+
+        <div class="eventos-grid" id="eventos-grid">
+
+            <!-- EVENTO 1 — HOJE -->
+            <div class="evento-card urgente reveal">
+                <div class="evento-date-block">
+                    <div class="evento-day">15</div>
+                    <div class="evento-month">Maio 2026</div>
+                    <div class="evento-weekday">Quinta-Feira</div>
+                </div>
+                <div class="evento-info">
+                    <div class="evento-location">
+                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+                        Florianópolis — SC
+                    </div>
+                    <div class="evento-menu-title">Noite do Steak Tartare</div>
+                    <div class="evento-pratos">
+                        <span class="prato-tag">Steak Tartare · Gema Curada</span>
+                        <span class="prato-tag">Pappardelle de Fraldinha</span>
+                        <span class="prato-tag">Brownie & Farofa Crocante</span>
+                    </div>
+                </div>
+                <div class="evento-right">
+                    <div class="evento-price">R$150 <small>/ pessoa</small></div>
+                    <span class="vagas-badge critico">⚡ 1 vaga restante</span>
+                    <button class="btn-reservar" onclick="openModal('15/05 — Florianópolis, SC', '15/05 - Florianópolis')">Reservar Agora</button>
+                </div>
+            </div>
+
+            <!-- EVENTO 2 — 29/05 Curitiba -->
+            <div class="evento-card reveal">
+                <div class="evento-date-block">
+                    <div class="evento-day">29</div>
+                    <div class="evento-month">Maio 2026</div>
+                    <div class="evento-weekday">Sexta-Feira</div>
+                </div>
+                <div class="evento-info">
+                    <div class="evento-location">
+                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+                        Curitiba — PR
+                    </div>
+                    <div class="evento-menu-title">Noite do Bife Wellington</div>
+                    <div class="evento-pratos">
+                        <span class="prato-tag">Carpaccio de Salmão</span>
+                        <span class="prato-tag">Bife Wellington</span>
+                        <span class="prato-tag">Crème Brûlée</span>
+                    </div>
+                </div>
+                <div class="evento-right">
+                    <div class="evento-price">R$180 <small>/ pessoa</small></div>
+                    <span class="vagas-badge normal">8 vagas disponíveis</span>
+                    <button class="btn-reservar" onclick="openModal('29/05 — Curitiba, PR', '29/05 - Curitiba')">Reservar</button>
+                </div>
+            </div>
+
+            <!-- EVENTO 3 — 12/06 Porto Alegre -->
+            <div class="evento-card reveal">
+                <div class="evento-date-block">
+                    <div class="evento-day">12</div>
+                    <div class="evento-month">Jun 2026</div>
+                    <div class="evento-weekday">Sexta-Feira</div>
+                </div>
+                <div class="evento-info">
+                    <div class="evento-location">
+                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+                        Porto Alegre — RS
+                    </div>
+                    <div class="evento-menu-title">Noite Italiana</div>
+                    <div class="evento-pratos">
+                        <span class="prato-tag">Steak Tartare · Tapioca</span>
+                        <span class="prato-tag">Pappardelle de Fraldinha</span>
+                        <span class="prato-tag">Brownie de Chocolate</span>
+                    </div>
+                </div>
+                <div class="evento-right">
+                    <div class="evento-price">R$150 <small>/ pessoa</small></div>
+                    <span class="vagas-badge normal">12 vagas disponíveis</span>
+                    <button class="btn-reservar" onclick="openModal('12/06 — Porto Alegre, RS', '12/06 - Porto Alegre')">Reservar</button>
+                </div>
+            </div>
+
+            <!-- EVENTO 4 — 26/06 São Paulo -->
+            <div class="evento-card reveal">
+                <div class="evento-date-block">
+                    <div class="evento-day">26</div>
+                    <div class="evento-month">Jun 2026</div>
+                    <div class="evento-weekday">Sexta-Feira</div>
+                </div>
+                <div class="evento-info">
+                    <div class="evento-location">
+                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+                        São Paulo — SP
+                    </div>
+                    <div class="evento-menu-title">Menu Autoral</div>
+                    <div class="evento-pratos">
+                        <span class="prato-tag">Carpaccio de Salmão</span>
+                        <span class="prato-tag">Bife Wellington</span>
+                        <span class="prato-tag">Crème Brûlée</span>
+                    </div>
+                </div>
+                <div class="evento-right">
+                    <div class="evento-price">R$200 <small>/ pessoa</small></div>
+                    <span class="vagas-badge normal">14 vagas disponíveis</span>
+                    <button class="btn-reservar" onclick="openModal('26/06 — São Paulo, SP', '26/06 - São Paulo')">Reservar</button>
+                </div>
+            </div>
+
+            <!-- EVENTO 5 — 10/07 Rio de Janeiro -->
+            <div class="evento-card reveal">
+                <div class="evento-date-block">
+                    <div class="evento-day">10</div>
+                    <div class="evento-month">Jul 2026</div>
+                    <div class="evento-weekday">Sexta-Feira</div>
+                </div>
+                <div class="evento-info">
+                    <div class="evento-location">
+                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+                        Rio de Janeiro — RJ
+                    </div>
+                    <div class="evento-menu-title">Noite do Mar</div>
+                    <div class="evento-pratos">
+                        <span class="prato-tag">Carpaccio de Salmão</span>
+                        <span class="prato-tag">Pappardelle de Fraldinha</span>
+                        <span class="prato-tag">Crème Brûlée</span>
+                    </div>
+                </div>
+                <div class="evento-right">
+                    <div class="evento-price">R$200 <small>/ pessoa</small></div>
+                    <span class="vagas-badge normal">16 vagas disponíveis</span>
+                    <button class="btn-reservar" onclick="openModal('10/07 — Rio de Janeiro, RJ', '10/07 - Rio de Janeiro')">Reservar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     CARDÁPIO / PRATOS
+     ======================================================== -->
+<section class="cardapio" id="cardapio">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" style="color: var(--gold-light);" data-tk="cardapio_label">Os Pratos</span>
+            <h2 style="color: white;" data-tk="cardapio_title">Cada detalhe, uma emoção</h2>
+            <div class="gold-divider-wide"></div>
+        </div>
+        <p class="cardapio-intro reveal" data-tk="cardapio_intro">
+            O cardápio muda a cada edição. O que nunca muda é o cuidado com cada ingrediente e a paixão com que cada prato é criado.
+        </p>
+    </div>
+
+    <div class="pratos-grid" id="pratos-grid">
+
+        <!-- Prato 1 — Pappardelle (destaque) -->
+        <div class="prato-item large reveal">
+            <img src="fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg" alt="Pappardelle de Fraldinha">
+            <div class="prato-overlay">
+                <div class="prato-category">Prato Principal</div>
+                <div class="prato-name">Pappardelle com Ragu<br>de Fraldinha</div>
+                <div class="prato-desc">Massa fresca artesanal com ragu de fraldinha cozida lentamente, grana padano ralado na hora e crème fraîche.</div>
+            </div>
+        </div>
+
+        <!-- Prato 2 — Steak Tartare -->
+        <div class="prato-item reveal">
+            <img src="fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg" alt="Steak Tartare">
+            <div class="prato-overlay">
+                <div class="prato-category">Entrada</div>
+                <div class="prato-name">Steak Tartare</div>
+                <div class="prato-desc">Com crocante de tapioca e gema curada.</div>
+            </div>
+        </div>
+
+        <!-- Prato 3 — Brownie -->
+        <div class="prato-item reveal">
+            <img src="fotos/pratos/c53e6731-941b-4962-8841-4b6448780eb9.jpeg" alt="Brownie de Chocolate">
+            <div class="prato-overlay">
+                <div class="prato-category">Sobremesa</div>
+                <div class="prato-name">Brownie de Chocolate<br>Meio Amargo</div>
+                <div class="prato-desc">Com sorvete de creme e farofa crocante caramelizada.</div>
+            </div>
+        </div>
+
+        <!-- Prato 4 — Carpaccio de Salmão (card escuro) -->
+        <div class="prato-item dark-card reveal">
+            <div class="dark-card-content">
+                <div class="prato-category">Entrada</div>
+                <div class="prato-name" style="font-size: 1.85rem;">Carpaccio<br>de Salmão</div>
+                <div class="prato-desc" style="max-height: 90px; color: rgba(255,255,255,0.55); text-align: center;">Com alcaparras, azeite trufado, raspas de limão siciliano e ervas frescas.</div>
+            </div>
+        </div>
+
+        <!-- Prato 5 — Bife Wellington (card escuro) -->
+        <div class="prato-item dark-card reveal" style="background: #162216;">
+            <div class="dark-card-content">
+                <div class="prato-category">Prato Principal</div>
+                <div class="prato-name" style="font-size: 1.85rem;">Bife<br>Wellington</div>
+                <div class="prato-desc" style="max-height: 90px; color: rgba(255,255,255,0.55); text-align: center;">Filé mignon envolto em duxelles de cogumelos e massa folhada, selado à perfeição.</div>
+            </div>
+        </div>
+
+        <!-- Prato 6 — Crème Brûlée (card escuro) -->
+        <div class="prato-item dark-card reveal" style="background: #1E1508;">
+            <div class="dark-card-content">
+                <div class="prato-category">Sobremesa</div>
+                <div class="prato-name" style="font-size: 1.85rem;">Crème<br>Brûlée</div>
+                <div class="prato-desc" style="max-height: 90px; color: rgba(255,255,255,0.55); text-align: center;">Clássico francês com caramelização flamejada na hora e toque de baunilha.</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ========================================================
+     CHEF RAPHAEL
+     ======================================================== -->
+<section class="chef" id="chef">
+    <div class="container">
+        <div class="chef-grid">
+
+            <div class="chef-photos reveal">
+                <div class="chef-photo-main">
+                    <img src="fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg" alt="Chef Raphael Gonzaga" id="chef-photo">
+                </div>
+            </div>
+
+            <div class="chef-text reveal">
+                <span class="section-label" data-tk="chef_label">O Criador</span>
+                <h2 class="chef-name">
+                    <span data-tk="chef_name">Raphael Gonzaga</span>
+                    <em data-tk="chef_role">Chef & Anfitrião</em>
+                </h2>
+                <p data-tk="chef_p1">Raphael Gonzaga é o coração e a alma por trás do Viva La Mesa. Com uma cozinha que combina técnica apurada, criatividade e autenticidade, ele transforma cada jantar em uma experiência única e inesquecível.</p>
+                <p data-tk="chef_p2">Apaixonado por ingredientes frescos e por criar conexões reais à mesa, Raphael não apenas cozinha — ele cria o ambiente perfeito para que histórias aconteçam. Cada detalhe é pensado com precisão e carinho, do mise en place ao momento da sobremesa.</p>
+                <p data-tk="chef_p3">O Viva La Mesa nasceu do desejo genuíno de oferecer algo que os restaurantes tradicionais raramente conseguem: intimidade verdadeira, exclusividade e uma relação autêntica entre o chef e seus convidados.</p>
+                <div class="chef-quote">
+                    <blockquote data-tk="chef_quote">"Cozinhar é minha forma de dizer que me importo. Cada prato carrega uma intenção, cada noite é uma história nova."</blockquote>
+                </div>
+                <div class="chef-signature" data-tk="chef_signature">Raphael Gonzaga</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     GALERIA
+     ======================================================== -->
+<div class="galeria">
+    <div class="section-header reveal" style="padding: 3.5rem 0 1.5rem; background: var(--cream-dark);">
+        <span class="section-label" data-tk="galeria_label">Memórias</span>
+        <h2 style="font-size: clamp(2rem, 4vw, 3rem); color: var(--green-dark); margin-top: 0.6rem;" data-tk="galeria_title">Edições Anteriores</h2>
+        <div class="gold-divider-wide"></div>
+    </div>
+    <div class="galeria-strip" id="galeria-strip"></div>
+</div>
+
+<!-- ========================================================
+     COMO FUNCIONA
+     ======================================================== -->
+<section class="como-funciona">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-tk="como_label">O Ritual</span>
+            <h2 data-tk="como_title">Como Funciona</h2>
+            <div class="gold-divider-wide"></div>
+        </div>
+        <div class="steps-grid">
+            <div class="step reveal">
+                <div class="step-number">01</div>
+                <h3 data-tk="como_s1_title">Escolha a Data</h3>
+                <p data-tk="como_s1_desc">Consulte o calendário de eventos e escolha a data e cidade que fazem sentido para você.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-number">02</div>
+                <h3 data-tk="como_s2_title">Reserve sua Vaga</h3>
+                <p data-tk="como_s2_desc">Vagas limitadas a 12 convidados por noite. Confirme sua reserva e aguarde o contato do Chef.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-number">03</div>
+                <h3 data-tk="como_s3_title">Cardápio Revelado</h3>
+                <p data-tk="como_s3_desc">Na véspera do jantar, você recebe o cardápio completo e todos os detalhes da noite especial.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-number">04</div>
+                <h3 data-tk="como_s4_title">Viva a Experiência</h3>
+                <p data-tk="como_s4_desc">Chegue, relaxe e entregue-se. O Chef Raphael cuida de absolutamente tudo. Uma noite para lembrar.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     RESERVA — CTA FINAL
+     ======================================================== -->
+<section class="reserva" id="reserva">
+    <div class="reserva-content reveal">
+        <span class="section-label" style="color: var(--gold-light);" data-tk="reserva_label">Reserve Agora</span>
+        <h2><span data-tk="reserva_title_1">Sua mesa</span><br>está <em data-tk="reserva_title_em">esperando</em></h2>
+        <p data-tk="reserva_p">As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.</p>
+        <div class="reserva-actions">
+            <a href="#eventos" class="btn-primary" style="text-decoration:none;">Ver Eventos</a>
+            <a href="https://wa.me/5548996245254?text=Olá!%20Quero%20saber%20mais%20sobre%20o%20Viva%20La%20Mesa." class="btn-outline" target="_blank">Falar no WhatsApp</a>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     FOOTER
+     ======================================================== -->
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="fotos/logo/Logo.jpg" alt="Viva La Mesa" class="footer-logo" id="footer-logo">
+                <p>Uma experiência gastronômica exclusiva que transforma jantares em memórias. Cozinha que reúne, histórias que ficam.</p>
+            </div>
+            <div>
+                <h4>Navegação</h4>
+                <ul>
+                    <li><a href="#experiencia">A Experiência</a></li>
+                    <li><a href="#eventos">Próximos Eventos</a></li>
+                    <li><a href="#cardapio">Cardápio</a></li>
+                    <li><a href="#chef">O Chef</a></li>
+                    <li><a href="#reserva">Reservar Mesa</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contato</h4>
+                <ul>
+                    <li>
+                        <a href="https://instagram.com/vivalamesa" target="_blank" style="display:flex;align-items:center;gap:0.6rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            @vivalamesa
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://wa.me/5548996245254?text=Olá!%20Quero%20saber%20mais%20sobre%20o%20Viva%20La%20Mesa." target="_blank" style="display:flex;align-items:center;gap:0.6rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            (48) 99624-5254
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Viva La Mesa. Todos os direitos reservados.</span>
+            <span class="footer-tagline" data-tk="footer_tagline">Chef Raphael Gonzaga</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ========================================================
+     MODAL DE RESERVA
+     ======================================================== -->
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <h3>Fazer Reserva</h3>
+        <p class="modal-subtitle" id="modal-subtitle">Preencha seus dados abaixo</p>
+
+        <div id="form-area">
+            <form onsubmit="submitForm(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" id="res-nome" placeholder="Seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sobrenome</label>
+                        <input type="text" id="res-sobrenome" placeholder="Sobrenome" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="res-email" placeholder="seu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp</label>
+                    <input type="tel" id="res-whatsapp" placeholder="(48) 99999-9999" required>
+                </div>
+                <div class="form-group">
+                    <label>Evento</label>
+                    <select id="evento-select" required>
+                        <option value="">Selecione o evento</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número de pessoas</label>
+                    <select id="res-pessoas" required>
+                        <option value="">Quantas pessoas?</option>
+                        <option value="1">1 pessoa</option>
+                        <option value="2">2 pessoas</option>
+                        <option value="3">3 pessoas</option>
+                        <option value="4">4 pessoas</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.75rem;">
+                    Confirmar Interesse
+                </button>
+            </form>
+        </div>
+
+        <div class="form-success" id="form-success">
+            <h4>Perfeito!</h4>
+            <p>Recebemos sua solicitação.<br>O Chef Raphael entrará em contato em breve para confirmar sua reserva.<br><br>Até lá — prepare-se para uma noite inesquecível.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── NAVBAR SCROLL ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 80);
+    }, { passive: true });
+
+    // ── REVEAL ON SCROLL ──
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }, i * 70);
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+
+    reveals.forEach(el => revealObserver.observe(el));
+
+    // ── MUSIC ──
+    const audio = document.getElementById('jazz-audio');
+    const musicBtn = document.getElementById('music-toggle');
+    let userMuted = false;
+    let heroVisible = true;
+
+    // Carrega música do CMS (localStorage), senão usa jazz.mp3
+    (function() {
+      const saved = localStorage.getItem('vlm_music');
+      if (saved) {
+        const src = document.getElementById('jazz-src');
+        if (src) { src.setAttribute('src', saved); audio.load(); }
+      }
+    })();
+
+    audio.volume = 0;
+
+    async function fadeIn() {
+        if (userMuted) return;
+        if (audio.paused) {
+            try { await audio.play(); } catch(e) { return; }
+        }
+        const fade = setInterval(() => {
+            if (audio.volume < 0.82) audio.volume = Math.min(0.82, audio.volume + 0.04);
+            else clearInterval(fade);
+        }, 80);
+        musicBtn.classList.remove('paused');
+    }
+
+    function fadeOut(pause = false) {
+        const fade = setInterval(() => {
+            if (audio.volume > 0.03) audio.volume = Math.max(0, audio.volume - 0.04);
+            else {
+                clearInterval(fade);
+                if (pause) audio.pause();
+            }
+        }, 80);
+        if (pause) musicBtn.classList.add('paused');
+    }
+
+
+
+    // Botão manual mute/unmute
+    musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!audio.paused) {
+            userMuted = true;
+            fadeOut(true);
+        } else {
+            userMuted = false;
+            if (heroVisible) fadeIn();
+        }
+    });
+
+    // ── MODAL ──
+    function openModal(label, eventoValue) {
+        const overlay = document.getElementById('modal-overlay');
+        const subtitle = document.getElementById('modal-subtitle');
+        const select = document.getElementById('evento-select');
+        const formArea = document.getElementById('form-area');
+        const success = document.getElementById('form-success');
+
+        formArea.style.display = 'block';
+        success.style.display = 'none';
+
+        // Limpa campos
+        ['res-nome','res-sobrenome','res-email','res-whatsapp'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = '';
+        });
+        document.getElementById('res-pessoas').value = '';
+
+        // Popula select de eventos dinamicamente
+        const events = getEvents().filter(e => e.visible);
+        select.innerHTML = '<option value="">Selecione o evento</option>' +
+            events.map(ev => `<option value="${ev.id}">${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state} · ${ev.title}</option>`).join('');
+
+        subtitle.textContent = label || 'Preencha seus dados abaixo';
+
+        // Pré-seleciona evento se informado
+        if (eventoValue) {
+            for (let opt of select.options) {
+                if (opt.textContent.includes(eventoValue)) { opt.selected = true; break; }
+            }
+        }
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('modal-overlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // ── EMAILJS — configure em https://www.emailjs.com ──
+    // 1. Crie conta gratuita em emailjs.com
+    // 2. Conecte seu Gmail em "Email Services" e anote o Service ID
+    // 3. Crie template em "Email Templates" com as variáveis abaixo e anote o Template ID
+    // 4. Em "Account > API Keys" copie a Public Key
+    // 5. Cole os três valores abaixo:
+    const EMAILJS_PUBLIC_KEY  = 'mETIxNc3KQ13S4I2e';
+    const EMAILJS_SERVICE_ID  = 'service_uj75jef';
+    const EMAILJS_TEMPLATE_ID = 'template_ey3ln3s';
+
+    // Template sugerido para criar no EmailJS:
+    // Assunto: Pré-reserva feita no Viva La Mesa — {{evento}}
+    // Corpo:
+    //   Olá {{to_name}} {{sobrenome}},
+    //
+    //   Pré-reserva feita no Viva La Mesa — {{evento}} — {{cidade}}
+    //
+    //   👤 Nome: {{to_name}} {{sobrenome}}
+    //   👥 Pessoas: {{pessoas}}
+    //   💰 Valor por pessoa: {{preco}}
+    //   💳 Total a pagar: {{valor_total}}
+    //
+    //   Para confirmar sua vaga, favor enviar o PIX para o celular:
+    //   📱 48996245254
+    //
+    //   Após o pagamento, envie o comprovante para o WhatsApp:
+    //   💬 +55 48 9624-5254
+    //
+    //   Qualquer dúvida estamos à disposição.
+    //   Até lá — prepare-se para uma noite inesquecível.
+    //
+    //   Viva La Mesa
+    //   Chef Raphael Gonzaga
+
+    (function initEmailJS() {
+        if (window.emailjs && EMAILJS_PUBLIC_KEY !== 'SEU_PUBLIC_KEY') {
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+        }
+    })();
+
+    function sendConfirmationEmail(reserva) {
+        if (!window.emailjs || EMAILJS_PUBLIC_KEY === 'SEU_PUBLIC_KEY') return;
+        const events = getEvents();
+        const ev = events.find(e => e.id === reserva.eventoId);
+        const pessoas = parseInt(reserva.pessoas) || 1;
+        const preco   = ev ? ev.price : 0;
+        const total   = preco * pessoas;
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_name:     reserva.nome,
+            to_email:    reserva.email,
+            sobrenome:   reserva.sobrenome,
+            evento:      reserva.eventoLabel,
+            pessoas:     pessoas,
+            whatsapp:    reserva.whatsapp,
+            preco:       preco ? 'R$ ' + preco : '',
+            valor_total: total ? 'R$ ' + total : '',
+            cidade:      ev ? ev.city + ', ' + ev.state : '',
+            name:        reserva.nome + ' ' + reserva.sobrenome,
+            email:       reserva.email,
+            message:     reserva.eventoLabel,
+        }).catch(err => console.error('EmailJS erro:', err.status, err.text));
+    }
+
+    function submitForm(e) {
+        e.preventDefault();
+        const select = document.getElementById('evento-select');
+        const eventoId = parseInt(select.value);
+        const eventoLabel = select.options[select.selectedIndex]?.textContent || '';
+        const reserva = {
+            id: Date.now(),
+            nome: document.getElementById('res-nome').value.trim(),
+            sobrenome: document.getElementById('res-sobrenome').value.trim(),
+            email: document.getElementById('res-email').value.trim(),
+            whatsapp: document.getElementById('res-whatsapp').value.trim(),
+            eventoId,
+            eventoLabel,
+            pessoas: document.getElementById('res-pessoas').value,
+            data: new Date().toLocaleString('pt-BR'),
+            contatado: false
+        };
+        try {
+            const reservas = JSON.parse(localStorage.getItem('vlm_reservas') || '[]');
+            reservas.push(reserva);
+            localStorage.setItem('vlm_reservas', JSON.stringify(reservas));
+        } catch(err) {}
+        sendConfirmationEmail(reserva);
+        document.getElementById('form-area').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+        setTimeout(closeModal, 4000);
+    }
+
+    // ── CAROUSEL RAPHAEL ──
+    let currentSlide = 0;
+    let carouselTimer;
+
+    function goToSlide(index) {
+        const slides = document.querySelectorAll('.rapha-slide');
+        const dots = document.querySelectorAll('.rapha-dot');
+        if (!slides.length) return;
+        slides[currentSlide]?.classList.remove('active');
+        dots[currentSlide]?.classList.remove('active');
+        currentSlide = index % slides.length;
+        slides[currentSlide]?.classList.add('active');
+        dots[currentSlide]?.classList.add('active');
+        resetCarouselTimer();
+    }
+
+    function nextSlide() {
+        const slides = document.querySelectorAll('.rapha-slide');
+        if (slides.length) goToSlide((currentSlide + 1) % slides.length);
+    }
+
+    function resetCarouselTimer() {
+        clearInterval(carouselTimer);
+        carouselTimer = setInterval(nextSlide, 1750);
+    }
+
+    // ── CMS MEDIA DATA ──
+    const DEFAULT_HERO_VIDEOS = [
+      { id:1, url:'video.mp4', visible:true }
+    ];
+    const DEFAULT_EXPERIENCE_PHOTOS = [
+      { id:1, url:'fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg', alt:'Chef Raphael Gonzaga', order:1, visible:true },
+      { id:2, url:'fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg', alt:'Raphael na cozinha', order:2, visible:true },
+      { id:3, url:'fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg', alt:'Raphael com gema curada', order:3, visible:true }
+    ];
+    const DEFAULT_GALLERY_PHOTOS = [
+      { id:1, url:'fotos/pratos/d81e855e-c654-4a20-a906-4c5cce47cd57.jpeg', alt:'Preparação', order:1, visible:true },
+      { id:2, url:'fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg', alt:'Chef em ação', order:2, visible:true },
+      { id:3, url:'fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg', alt:'Steak Tartare', order:3, visible:true },
+      { id:4, url:'fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg', alt:'Raphael', order:4, visible:true },
+      { id:5, url:'fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg', alt:'Pappardelle', order:5, visible:true }
+    ];
+    const DEFAULT_CHEF_PHOTO = 'fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg';
+
+    function getHeroVideos() { try { return JSON.parse(localStorage.getItem('vlm_hero_videos')) || DEFAULT_HERO_VIDEOS; } catch(e) { return DEFAULT_HERO_VIDEOS; } }
+    function getExperiencePhotos() { try { return JSON.parse(localStorage.getItem('vlm_experience_photos')) || DEFAULT_EXPERIENCE_PHOTOS; } catch(e) { return DEFAULT_EXPERIENCE_PHOTOS; } }
+    function getGalleryPhotos() { try { return JSON.parse(localStorage.getItem('vlm_gallery_photos')) || DEFAULT_GALLERY_PHOTOS; } catch(e) { return DEFAULT_GALLERY_PHOTOS; } }
+    function getChefPhoto() { return localStorage.getItem('vlm_chef_photo') || DEFAULT_CHEF_PHOTO; }
+
+    // Hero video com ciclo automático
+    let heroVideoIndex = 0;
+    let heroVideos = [];
+    function initHeroVideo() {
+      heroVideos = getHeroVideos().filter(v => v.visible);
+      if (!heroVideos.length) heroVideos = DEFAULT_HERO_VIDEOS;
+      const vid = document.getElementById('hero-video');
+      if (!vid) return;
+      if (heroVideos.length > 1) {
+        vid.removeAttribute('loop');
+        vid.addEventListener('ended', () => {
+          heroVideoIndex = (heroVideoIndex + 1) % heroVideos.length;
+          const src = vid.querySelector('source') || document.createElement('source');
+          src.setAttribute('type','video/mp4');
+          src.setAttribute('src', heroVideos[heroVideoIndex].url);
+          if (!vid.contains(src)) vid.appendChild(src);
+          vid.load();
+          vid.play().catch(() => {});
+        });
+      } else {
+        vid.setAttribute('loop','');
+      }
+      const src = vid.querySelector('source');
+      if (src) src.setAttribute('src', heroVideos[0].url);
+      vid.load();
+    }
+
+    function renderExperienceCarousel() {
+      const inner = document.getElementById('rapha-carousel-inner');
+      const dotsEl = document.getElementById('rapha-dots');
+      if (!inner) return;
+      const photos = getExperiencePhotos().filter(p => p.visible).sort((a,b) => a.order - b.order);
+      if (!photos.length) return;
+      currentSlide = 0;
+      inner.innerHTML = photos.map((p,i) => `<div class="rapha-slide ${i===0?'active':''}"><img src="${p.url}" alt="${p.alt||'Experiência'}"></div>`).join('');
+      dotsEl.innerHTML = photos.map((_,i) => `<div class="rapha-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></div>`).join('');
+      resetCarouselTimer();
+    }
+
+    function renderGallery() {
+      const strip = document.getElementById('galeria-strip');
+      if (!strip) return;
+      const photos = getGalleryPhotos().filter(p => p.visible).sort((a,b) => a.order - b.order);
+      strip.innerHTML = photos.map(p => `<img src="${p.url}" alt="${p.alt||''}">`).join('');
+    }
+
+    function renderChefPhoto() {
+      const img = document.getElementById('chef-photo');
+      if (img) img.src = getChefPhoto();
+    }
+
+    initHeroVideo();
+    renderExperienceCarousel();
+    renderGallery();
+    renderChefPhoto();
+
+    // ── CMS DATA ──
+    const DEFAULT_EVENTS = [
+      { id:1, day:'15', month:'Maio 2026', weekday:'Quinta-Feira', city:'Florianópolis', state:'SC', title:'Noite do Steak Tartare', dishes:['Steak Tartare · Gema Curada','Pappardelle de Fraldinha','Brownie & Farofa Crocante'], price:150, vagas_total:12, urgente:true, visible:true },
+      { id:2, day:'29', month:'Maio 2026', weekday:'Sexta-Feira', city:'Curitiba', state:'PR', title:'Noite do Bife Wellington', dishes:['Carpaccio de Salmão','Bife Wellington','Crème Brûlée'], price:180, vagas_total:12, urgente:false, visible:true },
+      { id:3, day:'12', month:'Jun 2026', weekday:'Sexta-Feira', city:'Porto Alegre', state:'RS', title:'Noite Italiana', dishes:['Steak Tartare · Tapioca','Pappardelle de Fraldinha','Brownie de Chocolate'], price:150, vagas_total:12, urgente:false, visible:true },
+      { id:4, day:'26', month:'Jun 2026', weekday:'Sexta-Feira', city:'São Paulo', state:'SP', title:'Menu Autoral', dishes:['Carpaccio de Salmão','Bife Wellington','Crème Brûlée'], price:200, vagas_total:12, urgente:false, visible:true },
+      { id:5, day:'10', month:'Jul 2026', weekday:'Sexta-Feira', city:'Rio de Janeiro', state:'RJ', title:'Noite do Mar', dishes:['Carpaccio de Salmão','Pappardelle de Fraldinha','Crème Brûlée'], price:200, vagas_total:12, urgente:false, visible:true }
+    ];
+    const DEFAULT_DISHES = [
+      { id:1, category:'Prato Principal', name:'Pappardelle com Ragu de Fraldinha', desc:'Massa fresca artesanal com ragu de fraldinha cozida lentamente, grana padano ralado na hora e crème fraîche.', image:'fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg', hasImage:true, order:1, visible:true },
+      { id:2, category:'Entrada', name:'Steak Tartare', desc:'Com crocante de tapioca e gema curada.', image:'fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg', hasImage:true, order:2, visible:true },
+      { id:3, category:'Sobremesa', name:'Brownie de Chocolate Meio Amargo', desc:'Com sorvete de creme e farofa crocante caramelizada.', image:'fotos/pratos/c53e6731-941b-4962-8841-4b6448780eb9.jpeg', hasImage:true, order:3, visible:true },
+      { id:4, category:'Entrada', name:'Carpaccio de Salmão', desc:'Com alcaparras, azeite trufado, raspas de limão siciliano e ervas frescas.', image:'', hasImage:false, order:4, visible:true },
+      { id:5, category:'Prato Principal', name:'Bife Wellington', desc:'Filé mignon envolto em duxelles de cogumelos e massa folhada, selado à perfeição.', image:'', hasImage:false, order:5, visible:true },
+      { id:6, category:'Sobremesa', name:'Crème Brûlée', desc:'Clássico francês com caramelização flamejada na hora e toque de baunilha.', image:'', hasImage:false, order:6, visible:true }
+    ];
+
+    function getEvents() { try { return JSON.parse(localStorage.getItem('vlm_events')) || DEFAULT_EVENTS; } catch(e) { return DEFAULT_EVENTS; } }
+    function getDishes() { try { return JSON.parse(localStorage.getItem('vlm_dishes')) || DEFAULT_DISHES; } catch(e) { return DEFAULT_DISHES; } }
+
+    // ── ESCASSEZ ──
+    const MONTHS_PT = {janeiro:0,fevereiro:1,'março':2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11,jan:0,fev:1,'mar':2,abr:3,mai:4,jun:5,jul:6,ago:7,set:8,out:9,nov:10,dez:11};
+    function parseEventDate(day, month) {
+      const parts = (month||'').toLowerCase().split(' ');
+      const mNum = MONTHS_PT[parts[0]] ?? 0;
+      const year = parseInt(parts[1]) || new Date().getFullYear();
+      return new Date(year, mNum, parseInt(day)||1);
+    }
+    const DEFAULT_SCARCITY_RULES = [
+      { minDays:60, pct:50 }, { minDays:30, pct:25 }, { minDays:14, pct:10 },
+      { minDays:7, pct:5 }, { minDays:0, pct:3 }
+    ];
+    function getScarcityRules() {
+      try { return JSON.parse(localStorage.getItem('vlm_scarcity')) || DEFAULT_SCARCITY_RULES; }
+      catch(e) { return DEFAULT_SCARCITY_RULES; }
+    }
+    function getDisplayVagas(ev) {
+      const total = ev.vagas_total || ev.vagas || 12;
+      const reservas = JSON.parse(localStorage.getItem('vlm_reservas')||'[]').filter(r => r.eventoId === ev.id).length;
+      const realRemaining = Math.max(0, total - reservas);
+      if (realRemaining === 0) return 0;
+      const daysUntil = Math.ceil((parseEventDate(ev.day, ev.month) - new Date()) / 86400000);
+      const rules = getScarcityRules().slice().sort((a,b) => b.minDays - a.minDays);
+      const rule = rules.find(r => daysUntil >= r.minDays) || rules[rules.length-1];
+      return Math.min(realRemaining, Math.max(1, Math.floor(total * rule.pct / 100)));
+    }
+
+    function renderEvents() {
+      const grid = document.getElementById('eventos-grid');
+      if (!grid) return;
+      const events = getEvents().filter(e => e.visible);
+      grid.innerHTML = events.map(ev => `
+        <div class="evento-card ${ev.urgente ? 'urgente' : ''} reveal">
+          <div class="evento-date-block">
+            <div class="evento-day">${ev.day}</div>
+            <div class="evento-month">${ev.month}</div>
+            <div class="evento-weekday">${ev.weekday}</div>
+          </div>
+          <div class="evento-info">
+            <div class="evento-location">
+              <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
+              ${ev.city} — ${ev.state}
+            </div>
+            <div class="evento-menu-title">${ev.title}</div>
+            <div class="evento-pratos">${ev.dishes.map(d => `<span class="prato-tag">${d}</span>`).join('')}</div>
+          </div>
+          <div class="evento-right">
+            <div class="evento-price">R$${ev.price} <small>/ pessoa</small></div>
+            ${(()=>{const v=getDisplayVagas(ev);return `<span class="vagas-badge ${v<=2?'critico':'normal'}">${v<=2?'⚡ ':''}${v} vaga${v!==1?'s':''} ${v<=2?'restante':'disponíveis'}</span>`})()}
+            <button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>
+          </div>
+        </div>`).join('');
+      document.querySelectorAll('#eventos-grid .reveal').forEach(el => revealObserver.observe(el));
+    }
+
+    function renderDishes() {
+      const grid = document.getElementById('pratos-grid');
+      if (!grid) return;
+      const dishes = getDishes().filter(d => d.visible).sort((a,b) => a.order - b.order);
+      grid.innerHTML = dishes.map(d => d.hasImage && d.image ? `
+        <div class="prato-item reveal">
+          <img src="${d.image}" alt="${d.name}">
+          <div class="prato-overlay">
+            <div class="prato-category">${d.category}</div>
+            <div class="prato-name">${d.name}</div>
+            <div class="prato-desc">${d.desc}</div>
+          </div>
+        </div>` : `
+        <div class="prato-item dark-card reveal">
+          <div class="dark-card-content">
+            <div class="prato-category">${d.category}</div>
+            <div class="prato-name" style="font-size:1.85rem;">${d.name}</div>
+            <div class="prato-desc" style="max-height:90px;color:rgba(255,255,255,0.55);text-align:center;">${d.desc}</div>
+          </div>
+        </div>`).join('');
+      document.querySelectorAll('#pratos-grid .reveal').forEach(el => revealObserver.observe(el));
+    }
+
+    // ── TEXTOS CMS ──
+    const DEFAULT_TEXTS = {
+      hero_eyebrow:    { v:'Experiência Gastronômica Exclusiva', max:60 },
+      hero_title_1:    { v:'Uma noite que', max:30 },
+      hero_title_em:   { v:'nunca', max:20 },
+      hero_title_3:    { v:'vai esquecer', max:30 },
+      hero_subtitle:   { v:'Cozinha que reúne. Histórias que ficam.', max:80 },
+      hero_cta:        { v:'Ver Próximos Eventos', max:40 },
+      exp_label:       { v:'A Experiência', max:40 },
+      exp_title:       { v:'Não é um restaurante.', max:60 },
+      exp_title_em:    { v:'momento único.', max:40 },
+      exp_p1:          { v:'Viva La Mesa é um jantar íntimo e exclusivo, criado para um grupo seleto de pessoas que buscam mais do que uma refeição. Aqui, cada detalhe é pensado para criar uma experiência sensorial completa — do aroma ao sabor, da mesa à memória.', max:300 },
+      exp_p2:          { v:'O formato é simples e revolucionário: datas abertas por calendário, vagas limitadas a 12 convidados, cardápio revelado na véspera. Você reserva seu lugar, o Chef Raphael Gonzaga cuida de tudo o mais.', max:300 },
+      exp_p3:          { v:'Água com e sem gás estão incluídas. As bebidas alcóolicas ficam por conta dos convidados, tornando a noite ainda mais personalizada e intimista.', max:300 },
+      exp_quote:       { v:'"Tenho o prazer de receber você\nem uma noite especial."', max:150 },
+      exp_stat1_num:   { v:'12', max:8 },
+      exp_stat1_label: { v:'Convidados por noite', max:40 },
+      exp_stat2_num:   { v:'3', max:8 },
+      exp_stat2_label: { v:'Tempos do menu', max:40 },
+      exp_stat3_num:   { v:'100%', max:8 },
+      exp_stat3_label: { v:'Exclusivo', max:40 },
+      eventos_label:   { v:'Calendário', max:40 },
+      eventos_title:   { v:'Próximos Eventos', max:60 },
+      eventos_subtitle:{ v:'As vagas são limitadas e preenchidas por ordem de reserva.\nNão deixe passar.', max:200 },
+      cardapio_label:  { v:'Os Pratos', max:40 },
+      cardapio_title:  { v:'Cada detalhe, uma emoção', max:60 },
+      cardapio_intro:  { v:'O cardápio muda a cada edição. O que nunca muda é o cuidado com cada ingrediente e a paixão com que cada prato é criado.', max:200 },
+      chef_label:      { v:'O Criador', max:40 },
+      chef_name:       { v:'Raphael Gonzaga', max:50 },
+      chef_role:       { v:'Chef & Anfitrião', max:50 },
+      chef_p1:         { v:'Raphael Gonzaga é o coração e a alma por trás do Viva La Mesa. Com uma cozinha que combina técnica apurada, criatividade e autenticidade, ele transforma cada jantar em uma experiência única e inesquecível.', max:300 },
+      chef_p2:         { v:'Apaixonado por ingredientes frescos e por criar conexões reais à mesa, Raphael não apenas cozinha — ele cria o ambiente perfeito para que histórias aconteçam. Cada detalhe é pensado com precisão e carinho, do mise en place ao momento da sobremesa.', max:300 },
+      chef_p3:         { v:'O Viva La Mesa nasceu do desejo genuíno de oferecer algo que os restaurantes tradicionais raramente conseguem: intimidade verdadeira, exclusividade e uma relação autêntica entre o chef e seus convidados.', max:300 },
+      chef_quote:      { v:'"Cozinhar é minha forma de dizer que me importo. Cada prato carrega uma intenção, cada noite é uma história nova."', max:200 },
+      chef_signature:  { v:'Raphael Gonzaga', max:50 },
+      galeria_label:   { v:'Memórias', max:40 },
+      galeria_title:   { v:'Edições Anteriores', max:60 },
+      como_label:      { v:'O Ritual', max:40 },
+      como_title:      { v:'Como Funciona', max:60 },
+      como_s1_title:   { v:'Escolha a Data', max:40 },
+      como_s1_desc:    { v:'Consulte o calendário de eventos e escolha a data e cidade que fazem sentido para você.', max:150 },
+      como_s2_title:   { v:'Reserve sua Vaga', max:40 },
+      como_s2_desc:    { v:'Vagas limitadas a 12 convidados por noite. Confirme sua reserva e aguarde o contato do Chef.', max:150 },
+      como_s3_title:   { v:'Cardápio Revelado', max:40 },
+      como_s3_desc:    { v:'Na véspera do jantar, você recebe o cardápio completo e todos os detalhes da noite especial.', max:150 },
+      como_s4_title:   { v:'Viva a Experiência', max:40 },
+      como_s4_desc:    { v:'Chegue, relaxe e entregue-se. O Chef Raphael cuida de absolutamente tudo. Uma noite para lembrar.', max:150 },
+      reserva_label:   { v:'Reserve Agora', max:40 },
+      reserva_title_1: { v:'Sua mesa', max:40 },
+      reserva_title_em:{ v:'esperando', max:30 },
+      reserva_p:       { v:'As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.', max:250 },
+      footer_tagline:  { v:'Chef Raphael Gonzaga', max:60 },
+    };
+    function getTexts() { try { return Object.assign({}, ...Object.entries(DEFAULT_TEXTS).map(([k,d])=>({[k]:d.v})), JSON.parse(localStorage.getItem('vlm_texts')||'{}')); } catch(e) { return Object.fromEntries(Object.entries(DEFAULT_TEXTS).map(([k,d])=>[k,d.v])); } }
+    function renderTexts() {
+      const t = getTexts();
+      document.querySelectorAll('[data-tk]').forEach(el => {
+        const key = el.getAttribute('data-tk');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+    }
+    renderTexts();
+
+    (function renderLogo() {
+      const src = localStorage.getItem('vlm_logo');
+      if (src) {
+        const nav = document.getElementById('nav-logo');
+        const footer = document.getElementById('footer-logo');
+        if (nav) nav.src = src;
+        if (footer) footer.src = src;
+      }
+    })();
+
+    renderEvents();
+    renderDishes();
+
+    // ── SMOOTH ANCHORS ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
