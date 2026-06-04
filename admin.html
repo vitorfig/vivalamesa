@@ -1317,14 +1317,11 @@ let _dishFileData = null;
 function handleDishFile(input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    _dishFileData = e.target.result;
+  compressImage(file, 800, 0.82, function(data) {
+    _dishFileData = data;
     const preview = document.getElementById('dish-img-preview');
-    preview.src = _dishFileData;
-    preview.classList.add('show');
-  };
-  reader.readAsDataURL(file);
+    preview.src = data; preview.classList.add('show');
+  });
 }
 
 
@@ -1628,14 +1625,11 @@ function closeMediaModal() {
 function handleMediaFile(input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    _mediaFileData = e.target.result;
+  compressImage(file, 1200, 0.82, function(data) {
+    _mediaFileData = data;
     const preview = document.getElementById('media-img-preview');
-    preview.src = _mediaFileData;
-    preview.classList.add('show');
-  };
-  reader.readAsDataURL(file);
+    preview.src = data; preview.classList.add('show');
+  });
 }
 
 
@@ -1657,6 +1651,24 @@ function saveMediaPhoto() {
   toast(editingMediaId ? 'Foto atualizada!' : 'Foto adicionada!');
 }
 
+// ── COMPRESSÃO DE IMAGEM (mantém < 60KB para caber no JSONbin) ──
+function compressImage(file, maxPx, quality, callback) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      callback(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 // ── LOGO ──
 const _logoFileData = { nav: null, footer: null };
 
@@ -1671,15 +1683,11 @@ function renderLogoPanel() {
 function handleLogoFile(slot, input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    _logoFileData[slot] = e.target.result;
+  compressImage(file, 400, 0.8, function(data) {
+    _logoFileData[slot] = data;
     const preview = document.getElementById('logo-' + slot + '-preview');
-    preview.src = _logoFileData[slot];
-    preview.classList.add('show');
-    document.getElementById('logo-' + slot + '-input').value = '';
-  };
-  reader.readAsDataURL(file);
+    preview.src = data; preview.classList.add('show');
+  });
 }
 
 function saveLogo(slot) {
@@ -1702,14 +1710,11 @@ function renderChefPanel() {
 function handleChefFile(input) {
   const file = input.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    _chefFileData = e.target.result;
+  compressImage(file, 800, 0.82, function(data) {
+    _chefFileData = data;
     const preview = document.getElementById('chef-photo-preview');
-    preview.src = _chefFileData;
-    preview.classList.add('show');
-  };
-  reader.readAsDataURL(file);
+    preview.src = data; preview.classList.add('show');
+  });
 }
 
 function saveChefPhoto() {
