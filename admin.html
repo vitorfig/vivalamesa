@@ -380,18 +380,6 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
     </div>
   </div>
 
-  <!-- MODAL TOKEN GITHUB -->
-  <div class="token-modal-bg" id="token-modal-bg">
-    <div class="token-modal">
-      <h3>Token do GitHub</h3>
-      <p>Para publicar alterações no site, informe um token pessoal do GitHub com permissão de escrita no repositório <strong>vitorfig/vivalamesa</strong>.<br><br>Acesse <strong>github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong> e crie um token com permissão <em>Contents: Read and write</em>.</p>
-      <input type="password" id="gh-token-input" placeholder="github_pat_...">
-      <div class="token-modal-actions">
-        <button class="btn-cancel" onclick="closeTokenModal()">Cancelar</button>
-        <button class="btn-save" onclick="saveTokenAndPublish()">Salvar e Publicar</button>
-      </div>
-    </div>
-  </div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('eventos', this)">Próximos Eventos</button>
@@ -751,25 +739,22 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
 <script>
 const PASS = 'vivalamesa2026';
-const GH_OWNER = 'vitorfig';
-const GH_REPO  = 'vivalamesa';
-const GH_FILE  = 'data.json';
+const BIN_ID  = '6a220187f5f4af5e29bac7cb';
+const BIN_KEY = '$2a$10$rweS9uffWfcxLLzxZ8nJ.etYtOqT9E2irqNG40WiLDTaFKvgo7BT6';
 
-// ── PUBLICAR NO GITHUB ──
+// ── PUBLICAR VIA JSONBIN ──
 function collectPublishData() {
   const strip = (arr) => arr.map(item => {
     const clean = { ...item };
     if (clean.image && clean.image.startsWith('data:')) { clean.image = ''; clean.hasImage = false; }
-    if (clean.url && clean.url.startsWith('data:')) { clean.url = ''; }
-    if (clean.url && clean.url.startsWith('idb:')) { clean.url = 'video.mp4'; }
+    if (clean.url   && clean.url.startsWith('data:'))   { clean.url = ''; }
+    if (clean.url   && clean.url.startsWith('idb:'))    { clean.url = 'video.mp4'; }
     return clean;
-  }).filter(item => !item.url || item.url);
-
+  });
   const logoNav    = localStorage.getItem('vlm_logo_nav');
   const logoFooter = localStorage.getItem('vlm_logo_footer');
   const chef       = localStorage.getItem('vlm_chef_photo');
   const music      = localStorage.getItem('vlm_music');
-
   return {
     events:            getEvents(),
     dishes:            strip(getDishes()),
@@ -786,56 +771,22 @@ function collectPublishData() {
   };
 }
 
-async function publishToGitHub(token) {
-  const data    = collectPublishData();
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+function clickPublish() { doPublish(); }
 
-  const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, {
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
-  });
-  let sha = null;
-  if (getRes.ok) { const j = await getRes.json(); sha = j.sha; }
-
-  const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, {
-    method: 'PUT',
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: 'Atualizar dados do site via admin', content, ...(sha ? { sha } : {}) })
-  });
-  return putRes.ok;
-}
-
-function clickPublish() {
-  const token = localStorage.getItem('vlm_gh_token');
-  if (!token) { openTokenModal(); return; }
-  doPublish(token);
-}
-
-function openTokenModal() {
-  const saved = localStorage.getItem('vlm_gh_token') || '';
-  document.getElementById('gh-token-input').value = saved;
-  document.getElementById('token-modal-bg').classList.add('open');
-}
-function closeTokenModal() { document.getElementById('token-modal-bg').classList.remove('open'); }
-
-async function saveTokenAndPublish() {
-  const token = document.getElementById('gh-token-input').value.trim();
-  if (!token) { alert('Informe o token.'); return; }
-  localStorage.setItem('vlm_gh_token', token);
-  closeTokenModal();
-  doPublish(token);
-}
-
-async function doPublish(token) {
+async function doPublish() {
   const btn = document.getElementById('publish-btn');
   btn.disabled = true;
   btn.textContent = 'Publicando...';
   try {
-    const ok = await publishToGitHub(token);
-    if (ok) {
-      toast('✅ Publicado! O site atualiza em ~1 minuto.');
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': BIN_KEY },
+      body: JSON.stringify(collectPublishData())
+    });
+    if (res.ok) {
+      toast('✅ Publicado! Todos os dispositivos verão as mudanças.');
     } else {
-      toast('❌ Erro ao publicar. Verifique o token.');
-      localStorage.removeItem('vlm_gh_token');
+      toast('❌ Erro ao publicar. Tente novamente.');
     }
   } catch(e) {
     toast('❌ Erro de conexão.');

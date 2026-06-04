@@ -2463,12 +2463,12 @@
     renderEvents();
     renderDishes();
 
-    // ── SYNC data.json (todos os dispositivos) ──
+    // ── SYNC JSONbin (todos os dispositivos) ──
     (async function syncRemoteData() {
       try {
-        const res = await fetch('data.json?t=' + Date.now());
+        const res = await fetch('https://api.jsonbin.io/v3/b/6a220187f5f4af5e29bac7cb/latest?t=' + Date.now());
         if (!res.ok) return;
-        const d = await res.json();
+        const d = (await res.json()).record;
         if (d.events)            localStorage.setItem('vlm_events',            JSON.stringify(d.events));
         if (d.dishes)            localStorage.setItem('vlm_dishes',            JSON.stringify(d.dishes));
         if (d.texts  && Object.keys(d.texts).length)
