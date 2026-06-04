@@ -1961,11 +1961,11 @@
     let userMuted = false;
     let heroVisible = true;
 
-    // Carrega música do CMS (localStorage/IDB), senão usa jazz.mp3
+    // Carrega música do CMS, senão usa jazz.mp3
     (async function() {
       const saved = localStorage.getItem('vlm_music');
       if (saved) {
-        const url = await resolveMediaUrl(saved);
+        const url = saved.startsWith('idb:') ? await VLM_IDB.toObjectURL(saved.slice(4)) : saved;
         const src = document.getElementById('jazz-src');
         if (src && url) { src.setAttribute('src', url); audio.load(); }
       }

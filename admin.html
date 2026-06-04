@@ -792,6 +792,35 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 const PASS = 'vivalamesa2026';
 const BIN_ID  = '6a220187f5f4af5e29bac7cb';
 const BIN_KEY = '$2a$10$rweS9uffWfcxLLzxZ8nJ.etYtOqT9E2irqNG40WiLDTaFKvgo7BT6';
+const CLOUDINARY_CLOUD  = 'dcwcjuoxw';
+const CLOUDINARY_PRESET = 'vivalamesa_upload';
+
+// ── CLOUDINARY UPLOAD ──
+async function uploadToCloudinary(file) {
+  const rtype = (file.type.startsWith('video/') || file.type.startsWith('audio/')) ? 'video' : 'image';
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${rtype}/upload`, {
+    method: 'POST', body: fd
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'HTTP ' + res.status); }
+  return (await res.json()).secure_url;
+}
+
+let _uploading = 0;
+function onUploadStart() {
+  _uploading++;
+  const btn = document.getElementById('publish-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Aguarde uploads...'; }
+}
+function onUploadEnd() {
+  _uploading = Math.max(0, _uploading - 1);
+  if (_uploading === 0) {
+    const btn = document.getElementById('publish-btn');
+    if (btn) { btn.disabled = false; btn.textContent = '⬆ Publicar no Site'; }
+  }
+}
 
 // ── PUBLICAR VIA JSONBIN ──
 function collectPublishData() {
@@ -817,8 +846,8 @@ function collectPublishData() {
     gallery_photos:    strip(getGalleryPhotos()),
     logo_nav:    logoNav    || null,
     logo_footer: logoFooter || null,
-    chef_photo:  (chef  && !chef.startsWith('data:'))  ? chef  : null,
-    music:       (music && !music.startsWith('idb:'))  ? music : null,
+    chef_photo:  chef  || null,
+    music:       (music && !music.startsWith('idb:')) ? music : null,
   };
 }
 
@@ -1315,13 +1344,13 @@ function closeDishModal() {
 let _dishFileData = null;
 
 function handleDishFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  compressImage(file, 800, 0.82, function(data) {
-    _dishFileData = data;
-    const preview = document.getElementById('dish-img-preview');
-    preview.src = data; preview.classList.add('show');
-  });
+  const file = input.files[0]; if (!file) return;
+  const preview = document.getElementById('dish-img-preview');
+  preview.src = URL.createObjectURL(file); preview.classList.add('show');
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _dishFileData = url; onUploadEnd();
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
 
@@ -1512,25 +1541,21 @@ function closeHeroModal() {
 }
 
 function handleHeroFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  _heroFile = file;
-  document.getElementById('hero-url').value = '';
+  const file = input.files[0]; if (!file) return;
   const preview = document.getElementById('hero-video-preview');
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = 'block';
+  preview.src = URL.createObjectURL(file); preview.style.display = 'block';
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _heroFile = url; onUploadEnd(); toast('Vídeo enviado ✓');
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
-async function saveHeroVideo() {
+function saveHeroVideo() {
   const vs = getHeroVideos();
   const id = editingHeroId || nextId(vs);
-  let url = '';
-  if (_heroFile) {
-    const key = 'hero_video_' + id;
-    await VLM_IDB.save(key, _heroFile);
-    url = 'idb:' + key;
-  }
-  if (!url) { alert('Selecione um arquivo de vídeo.'); return; }
+  const existing = editingHeroId ? (vs.find(x => x.id === editingHeroId) || {}).url || '' : '';
+  const url = (typeof _heroFile === 'string' ? _heroFile : '') || existing;
+  if (!url) { alert('Selecione um arquivo de vídeo e aguarde o upload terminar.'); return; }
   const data = { id, url, visible: document.getElementById('hero-visible').checked };
   if (editingHeroId) { const i = vs.findIndex(x => x.id === editingHeroId); vs[i] = data; }
   else { vs.push(data); }
@@ -1623,13 +1648,13 @@ function closeMediaModal() {
 }
 
 function handleMediaFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  compressImage(file, 1200, 0.82, function(data) {
-    _mediaFileData = data;
-    const preview = document.getElementById('media-img-preview');
-    preview.src = data; preview.classList.add('show');
-  });
+  const file = input.files[0]; if (!file) return;
+  const preview = document.getElementById('media-img-preview');
+  preview.src = URL.createObjectURL(file); preview.classList.add('show');
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _mediaFileData = url; onUploadEnd();
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
 
@@ -1651,28 +1676,6 @@ function saveMediaPhoto() {
   toast(editingMediaId ? 'Foto atualizada!' : 'Foto adicionada!');
 }
 
-// ── COMPRESSÃO DE IMAGEM (mantém < 60KB para caber no JSONbin) ──
-function compressImage(file, maxPx, quality, callback) {
-  const isPng = file.type === 'image/png';
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
-      const canvas = document.createElement('canvas');
-      canvas.width  = Math.round(img.width  * scale);
-      canvas.height = Math.round(img.height * scale);
-      const ctx = canvas.getContext('2d');
-      if (isPng) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      callback(canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', isPng ? 1 : quality));
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
 
 // ── LOGO ──
 const _logoFileData = { nav: null, footer: null };
@@ -1686,13 +1689,13 @@ function renderLogoPanel() {
 }
 
 function handleLogoFile(slot, input) {
-  const file = input.files[0];
-  if (!file) return;
-  compressImage(file, 400, 0.8, function(data) {
-    _logoFileData[slot] = data;
-    const preview = document.getElementById('logo-' + slot + '-preview');
-    preview.src = data; preview.classList.add('show');
-  });
+  const file = input.files[0]; if (!file) return;
+  const preview = document.getElementById('logo-' + slot + '-preview');
+  preview.src = URL.createObjectURL(file); preview.classList.add('show');
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _logoFileData[slot] = url; onUploadEnd(); toast('Logo enviada ✓');
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
 function saveLogo(slot) {
@@ -1713,13 +1716,13 @@ function renderChefPanel() {
 }
 
 function handleChefFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  compressImage(file, 800, 0.82, function(data) {
-    _chefFileData = data;
-    const preview = document.getElementById('chef-photo-preview');
-    preview.src = data; preview.classList.add('show');
-  });
+  const file = input.files[0]; if (!file) return;
+  const preview = document.getElementById('chef-photo-preview');
+  preview.src = URL.createObjectURL(file); preview.classList.add('show');
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _chefFileData = url; onUploadEnd(); toast('Foto enviada ✓');
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
 function saveChefPhoto() {
@@ -1909,10 +1912,12 @@ function renderMusicPanel() {
 }
 
 function handleMusicFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  _musicFile = file;
+  const file = input.files[0]; if (!file) return;
   updateMusicPreview(URL.createObjectURL(file));
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _musicFile = url; onUploadEnd(); toast('Música enviada ✓');
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
 }
 
 function updateMusicPreview(url) {
@@ -1925,10 +1930,11 @@ function updateMusicPreview(url) {
   player.load();
 }
 
-async function saveMusic() {
-  if (!_musicFile) { alert('Selecione um arquivo de áudio.'); return; }
-  await VLM_IDB.save('vlm_music_file', _musicFile);
-  localStorage.setItem('vlm_music', 'idb:vlm_music_file');
+function saveMusic() {
+  if (!_musicFile || typeof _musicFile !== 'string') {
+    alert('Selecione um arquivo de áudio e aguarde o upload terminar.'); return;
+  }
+  localStorage.setItem('vlm_music', _musicFile);
   _musicFile = null;
   toast('Música salva! Recarregue o site para ouvir.');
 }
