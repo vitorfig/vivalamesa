@@ -1,0 +1,31 @@
+{
+  "events": [
+    { "id": 1, "day": "15", "month": "Maio 2026", "weekday": "Quinta-Feira", "city": "Florianópolis", "state": "SC", "title": "Noite do Steak Tartare", "dishes": ["Steak Tartare · Gema Curada", "Pappardelle de Fraldinha", "Brownie & Farofa Crocante"], "price": 150, "vagas_total": 12, "urgente": true, "visible": true },
+    { "id": 2, "day": "29", "month": "Maio 2026", "weekday": "Sexta-Feira", "city": "Curitiba", "state": "PR", "title": "Noite do Bife Wellington", "dishes": ["Carpaccio de Salmão", "Bife Wellington", "Crème Brûlée"], "price": 180, "vagas_total": 12, "urgente": false, "visible": true },
+    { "id": 3, "day": "12", "month": "Jun 2026", "weekday": "Sexta-Feira", "city": "Porto Alegre", "state": "RS", "title": "Noite Italiana", "dishes": ["Steak Tartare · Tapioca", "Pappardelle de Fraldinha", "Brownie de Chocolate"], "price": 150, "vagas_total": 12, "urgente": false, "visible": true },
+    { "id": 4, "day": "26", "month": "Jun 2026", "weekday": "Sexta-Feira", "city": "São Paulo", "state": "SP", "title": "Menu Autoral", "dishes": ["Carpaccio de Salmão", "Bife Wellington", "Crème Brûlée"], "price": 200, "vagas_total": 12, "urgente": false, "visible": true }
+  ],
+  "dishes": [
+    { "id": 1, "category": "Prato Principal", "name": "Pappardelle com Ragu de Fraldinha", "desc": "Massa fresca artesanal com ragu de fraldinha cozida lentamente, grana padano ralado na hora e crème fraîche.", "image": "fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg", "hasImage": true, "order": 1, "visible": true },
+    { "id": 2, "category": "Entrada", "name": "Steak Tartare", "desc": "Com crocante de tapioca e gema curada.", "image": "fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg", "hasImage": true, "order": 2, "visible": true },
+    { "id": 3, "category": "Sobremesa", "name": "Brownie de Chocolate Meio Amargo", "desc": "Com sorvete de creme e farofa crocante caramelizada.", "image": "fotos/pratos/c53e6731-941b-4962-8841-4b6448780eb9.jpeg", "hasImage": true, "order": 3, "visible": true }
+  ],
+  "texts": {},
+  "insta": "vivalamesa",
+  "phone": "(48) 99624-5254",
+  "hero_videos": [
+    { "id": 1, "url": "video.mp4", "visible": true }
+  ],
+  "experience_photos": [
+    { "id": 1, "url": "fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg", "alt": "Raphael na cozinha", "order": 1, "visible": true },
+    { "id": 2, "url": "fotos/rapha/f5d221e0-ccfa-4e65-8194-3b7541e921dc.jpeg", "alt": "Raphael com gema curada", "order": 2, "visible": true },
+    { "id": 3, "url": "fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg", "alt": "Raphael", "order": 3, "visible": true }
+  ],
+  "gallery_photos": [
+    { "id": 1, "url": "fotos/pratos/d81e855e-c654-4a20-a906-4c5cce47cd57.jpeg", "alt": "Preparação", "order": 1, "visible": true },
+    { "id": 2, "url": "fotos/rapha/0d0f5290-5819-4844-8bfc-26b5c457060c.jpeg", "alt": "Chef em ação", "order": 2, "visible": true },
+    { "id": 3, "url": "fotos/pratos/f311da27-d1b5-42fa-b942-92a9a76b5b43.jpeg", "alt": "Steak Tartare", "order": 3, "visible": true },
+    { "id": 4, "url": "fotos/rapha/34bc42bb-b636-4c18-a762-6ac1a4adeb0c.jpeg", "alt": "Raphael", "order": 4, "visible": true },
+    { "id": 5, "url": "fotos/pratos/0181b050-3c18-41ee-b89d-44dc5b40138f.jpeg", "alt": "Pappardelle", "order": 5, "visible": true }
+  ]
+}
