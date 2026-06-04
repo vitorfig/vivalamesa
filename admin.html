@@ -815,10 +815,10 @@ function collectPublishData() {
     hero_videos:       strip(getHeroVideos()),
     experience_photos: strip(getExperiencePhotos()),
     gallery_photos:    strip(getGalleryPhotos()),
-    logo_nav:          (logoNav    && !logoNav.startsWith('data:'))    ? logoNav    : null,
-    logo_footer:       (logoFooter && !logoFooter.startsWith('data:')) ? logoFooter : null,
-    chef_photo:        (chef       && !chef.startsWith('data:'))       ? chef       : null,
-    music:             (music      && !music.startsWith('idb:'))       ? music      : null,
+    logo_nav:    logoNav    || null,
+    logo_footer: logoFooter || null,
+    chef_photo:  (chef  && !chef.startsWith('data:'))  ? chef  : null,
+    music:       (music && !music.startsWith('idb:'))  ? music : null,
   };
 }
 

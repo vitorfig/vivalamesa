@@ -2481,6 +2481,11 @@
         if (d.logo_footer)       localStorage.setItem('vlm_logo_footer',       d.logo_footer);
         if (d.chef_photo)        localStorage.setItem('vlm_chef_photo',        d.chef_photo);
         if (d.music && !d.music.startsWith('idb:')) localStorage.setItem('vlm_music', d.music);
+        // Aplica logos imediatamente
+        const navLogo    = document.getElementById('nav-logo');
+        const footerLogo = document.getElementById('footer-logo');
+        if (d.logo_nav    && navLogo)    navLogo.src    = d.logo_nav;
+        if (d.logo_footer && footerLogo) footerLogo.src = d.logo_footer;
         // Re-renderiza com dados atualizados
         renderEvents();
         renderDishes();
