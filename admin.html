@@ -829,18 +829,20 @@ async function doPublish() {
   btn.disabled = true;
   btn.textContent = 'Publicando...';
   try {
+    const payload = collectPublishData();
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Master-Key': BIN_KEY },
-      body: JSON.stringify(collectPublishData())
+      body: JSON.stringify(payload)
     });
+    const json = await res.json();
     if (res.ok) {
-      toast('✅ Publicado! Todos os dispositivos verão as mudanças.');
+      toast('✅ Publicado! ' + (payload.events||[]).length + ' eventos, ' + (payload.dishes||[]).length + ' pratos enviados.');
     } else {
-      toast('❌ Erro ao publicar. Tente novamente.');
+      toast('❌ Erro ' + res.status + ': ' + (json.message || 'tente novamente'));
     }
   } catch(e) {
-    toast('❌ Erro de conexão.');
+    toast('❌ Erro de conexão: ' + e.message);
   }
   btn.disabled = false;
   btn.textContent = '⬆ Publicar no Site';
