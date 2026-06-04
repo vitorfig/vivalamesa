@@ -114,6 +114,39 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 }
 .tab-btn.active { color: var(--green); border-bottom-color: var(--gold); }
 
+/* ── MOBILE MENU ── */
+.hamburger { display:none; background:none; border:none; cursor:pointer; padding:0.5rem; }
+.hamburger span { display:block; width:22px; height:2px; background:var(--green); margin:5px 0; transition:0.3s; }
+.mobile-menu {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200;
+}
+.mobile-menu.open { display:block; }
+.mobile-menu-panel {
+  position:absolute; top:0; left:0; width:75%; max-width:280px; height:100%;
+  background:white; padding:1.5rem; box-shadow:4px 0 20px rgba(0,0,0,0.15);
+  display:flex; flex-direction:column; gap:0.25rem;
+}
+.mobile-menu-panel .tab-btn {
+  display:block; text-align:left; padding:0.9rem 1rem; border-bottom:1px solid var(--border);
+  border-right:none; margin:0; font-size:0.82rem;
+}
+.mobile-menu-panel .tab-btn.active { color:var(--green); background:rgba(40,62,40,0.05); }
+.mobile-menu-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.mobile-menu-close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); }
+.mobile-tab-label { font-size:0.7rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; font-weight:600; }
+
+@media (max-width: 700px) {
+  .tabs .tab-btn { display:none; }
+  .hamburger { display:block; }
+  .tabs { padding: 0 1rem; align-items:center; justify-content:space-between; }
+  .topbar { padding:0 1rem; }
+  .topbar img { height:36px; }
+  .topbar-right { gap:0.75rem; }
+  .publish-btn { padding:0.35rem 0.75rem; font-size:0.65rem; }
+  .logout-btn { padding:0.35rem 0.75rem; font-size:0.65rem; }
+  .content { padding:1rem; }
+}
+
 .content { padding: 2rem; max-width: 1100px; margin: 0 auto; width: 100%; }
 
 /* ── PANELS ── */
@@ -382,11 +415,30 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
 
   <div class="tabs">
+    <button class="hamburger" onclick="openMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <span class="mobile-tab-label" id="mobile-tab-label">Próximos Eventos</span>
     <button class="tab-btn active" onclick="switchTab('eventos', this)">Próximos Eventos</button>
     <button class="tab-btn" onclick="switchTab('reservas', this)">Reservas</button>
     <button class="tab-btn" onclick="switchTab('cardapio', this)">Cardápio</button>
     <button class="tab-btn" onclick="switchTab('midia', this)">Mídia</button>
     <button class="tab-btn" onclick="switchTab('textos', this)">Textos do Site</button>
+  </div>
+
+  <!-- MENU MOBILE -->
+  <div class="mobile-menu" id="mobile-menu" onclick="closeMobileMenu(event)">
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-header">
+        <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);">Menu</span>
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+      </div>
+      <button class="tab-btn active" onclick="switchTab('eventos', this);closeMobileMenu()">Próximos Eventos</button>
+      <button class="tab-btn" onclick="switchTab('reservas', this);closeMobileMenu()">Reservas</button>
+      <button class="tab-btn" onclick="switchTab('cardapio', this);closeMobileMenu()">Cardápio</button>
+      <button class="tab-btn" onclick="switchTab('midia', this);closeMobileMenu()">Mídia</button>
+      <button class="tab-btn" onclick="switchTab('textos', this);closeMobileMenu()">Textos do Site</button>
+    </div>
   </div>
 
   <div class="content">
@@ -877,12 +929,26 @@ function saveEvents(arr) { localStorage.setItem('vlm_events', JSON.stringify(arr
 function saveDishes(arr) { localStorage.setItem('vlm_dishes', JSON.stringify(arr)); }
 function nextId(arr) { return arr.length ? Math.max(...arr.map(x => x.id)) + 1 : 1; }
 
+// ── MOBILE MENU ──
+function openMobileMenu() { document.getElementById('mobile-menu').classList.add('open'); }
+function closeMobileMenu(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+
 // ── TABS ──
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
+  // Sincroniza active no menu mobile também
+  document.querySelectorAll('.mobile-menu-panel .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mobile-menu-panel .tab-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active');
+  });
   document.getElementById('panel-' + name).classList.add('active');
+  const label = document.getElementById('mobile-tab-label');
+  if (label) label.textContent = btn.textContent;
 }
 
 function renderAll() { renderScarcityTable(); renderEventList(); renderReservasList(); renderDishList(); renderLogoPanel(); renderHeroList(); renderExperienciaList(); renderGaleriaList(); renderChefPanel(); renderMusicPanel(); renderTextosPanel(); }
