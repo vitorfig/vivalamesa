@@ -1653,6 +1653,7 @@ function saveMediaPhoto() {
 
 // ── COMPRESSÃO DE IMAGEM (mantém < 60KB para caber no JSONbin) ──
 function compressImage(file, maxPx, quality, callback) {
+  const isPng = file.type === 'image/png';
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
@@ -1661,8 +1662,12 @@ function compressImage(file, maxPx, quality, callback) {
       const canvas = document.createElement('canvas');
       canvas.width  = Math.round(img.width  * scale);
       canvas.height = Math.round(img.height * scale);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      callback(canvas.toDataURL('image/jpeg', quality));
+      const ctx = canvas.getContext('2d');
+      if (isPng) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      callback(canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', isPng ? 1 : quality));
     };
     img.src = e.target.result;
   };
