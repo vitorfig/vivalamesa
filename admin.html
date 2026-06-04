@@ -65,6 +65,9 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
   align-items: center;
   justify-content: space-between;
   height: 62px;
+  position: sticky;
+  top: 0;
+  z-index: 101;
   position: sticky; top: 0; z-index: 50;
 }
 .topbar img { height: 44px; }
@@ -83,6 +86,9 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
   border-bottom: 1px solid var(--border);
   display: flex;
   padding: 0 2rem;
+  position: sticky;
+  top: 62px;
+  z-index: 100;
 }
 .tab-btn {
   padding: 1rem 1.5rem;
@@ -424,16 +430,31 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
       <div class="midia-section">
         <div class="panel-header">
-          <h3>Logo</h3>
+          <h3>Logo do Menu</h3>
         </div>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Logo exibida no menu de navegação e no rodapé do site. Use o caminho relativo (ex: <code>fotos/logo/Logo.jpg</code>) ou URL externa.</p>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Logo exibida na barra de navegação.</p>
         <div class="field">
-          <label>URL ou caminho da logo</label>
-          <input type="text" id="logo-input" placeholder="fotos/logo/Logo.jpg ou https://..." oninput="previewLogo()">
-          <img id="logo-preview" class="chef-preview-full" alt="Preview Logo" style="max-height:120px;object-fit:contain;">
+          <label>Enviar arquivo do computador</label>
+          <input type="file" id="logo-nav-file" accept="image/*" onchange="handleLogoFile('nav', this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
         </div>
+        <img id="logo-nav-preview" class="chef-preview-full" alt="Preview Logo Menu" style="max-height:120px;object-fit:contain;margin-top:1rem;">
         <div class="form-actions" style="margin-top:1rem;">
-          <button class="btn-save" onclick="saveLogo()">Salvar Logo</button>
+          <button class="btn-save" onclick="saveLogo('nav')">Salvar Logo do Menu</button>
+        </div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
+          <h3>Logo do Rodapé</h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Logo exibida no rodapé do site.</p>
+        <div class="field">
+          <label>Enviar arquivo do computador</label>
+          <input type="file" id="logo-footer-file" accept="image/*" onchange="handleLogoFile('footer', this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
+        </div>
+        <img id="logo-footer-preview" class="chef-preview-full" alt="Preview Logo Rodapé" style="max-height:120px;object-fit:contain;margin-top:1rem;">
+        <div class="form-actions" style="margin-top:1rem;">
+          <button class="btn-save" onclick="saveLogo('footer')">Salvar Logo do Rodapé</button>
         </div>
       </div>
 
@@ -468,11 +489,11 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
         <div class="panel-header">
           <h3>Foto do Chef</h3>
         </div>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Foto exibida na seção "O Criador". Use o caminho relativo (ex: <code>fotos/rapha/foto.jpg</code>) ou URL externa.</p>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Foto exibida na seção "O Criador".</p>
         <div class="field">
-          <label>URL ou caminho da foto</label>
-          <input type="text" id="chef-photo-input" placeholder="fotos/rapha/foto.jpg ou https://..." oninput="previewChefPhoto()">
-          <img id="chef-photo-preview" class="chef-preview-full" alt="Preview Chef">
+          <label>Enviar arquivo do computador</label>
+          <input type="file" id="chef-photo-file" accept="image/*" onchange="handleChefFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
+          <img id="chef-photo-preview" class="chef-preview-full" alt="Preview Chef" style="margin-top:1rem;">
         </div>
         <div class="form-actions" style="margin-top:1rem;">
           <button class="btn-save" onclick="saveChefPhoto()">Salvar Foto do Chef</button>
@@ -483,10 +504,10 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
         <div class="panel-header">
           <h3>Música do Site</h3>
         </div>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Música ambiente que toca na home. Use o caminho relativo (ex: <code>jazz.mp3</code>) ou uma URL direta para arquivo MP3.</p>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Música ambiente que toca na home.</p>
         <div class="field">
-          <label>URL ou caminho do arquivo MP3</label>
-          <input type="text" id="music-input" placeholder="jazz.mp3 ou https://..." oninput="previewMusic()">
+          <label>Enviar arquivo de áudio (MP3)</label>
+          <input type="file" id="music-file" accept="audio/*" onchange="handleMusicFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
         </div>
         <div id="music-preview-wrap" style="display:none;margin:1rem 0;background:var(--green);padding:1.25rem;border-radius:2px;">
           <p style="color:rgba(255,255,255,0.6);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.75rem;">Prévia</p>
@@ -508,6 +529,23 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
         <button class="btn-save" onclick="saveTexts()" style="padding:0.7rem 1.5rem;">Salvar Todos</button>
       </div>
       <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Edite os textos de cada seção. O número ao lado do campo mostra quantos caracteres restam.</p>
+
+      <div class="midia-section">
+        <div class="panel-header"><h3>Redes Sociais & Contato</h3></div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Aparece no rodapé e no botão "Falar no WhatsApp".</p>
+        <div class="field">
+          <label>Instagram (sem o @)</label>
+          <input type="text" id="contact-insta" placeholder="vivalamesa">
+        </div>
+        <div class="field" style="margin-top:1rem;">
+          <label>WhatsApp / Telefone</label>
+          <input type="text" id="contact-phone" placeholder="(48) 99624-5254">
+        </div>
+        <div class="form-actions" style="margin-top:1rem;">
+          <button class="btn-save" onclick="saveContact()">Salvar Contato</button>
+        </div>
+      </div>
+
       <div id="textos-container"></div>
     </div>
 
@@ -609,10 +647,9 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
       <textarea id="dish-desc" placeholder="Descreva os ingredientes e preparo..."></textarea>
     </div>
     <div class="field">
-      <label>URL da Foto</label>
-      <input type="url" id="dish-image" placeholder="https://..." oninput="previewImage()">
+      <label>Foto do Prato</label>
+      <input type="file" id="dish-file" accept="image/*" onchange="handleDishFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
       <img id="dish-img-preview" class="img-preview" alt="Preview">
-      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Cole a URL de uma imagem. Dica: suba a foto no <a href="https://imgur.com" target="_blank" style="color:var(--gold);">imgur.com</a> e cole o link aqui.</small>
     </div>
     <div class="field">
       <label>Ordem na listagem</label>
@@ -637,9 +674,9 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
     <h3 id="hero-modal-title">Novo Vídeo</h3>
     <input type="hidden" id="hero-id">
     <div class="field">
-      <label>URL ou caminho do vídeo</label>
-      <input type="text" id="hero-url" placeholder="video.mp4 ou https://...">
-      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Para vídeos locais, use o caminho relativo (ex: <code>video.mp4</code>). Para externos, cole a URL direta do MP4.</small>
+      <label>Enviar arquivo de vídeo</label>
+      <input type="file" id="hero-file" accept="video/*" onchange="handleHeroFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
+      <video id="hero-video-preview" style="display:none;width:100%;margin-top:0.75rem;max-height:160px;object-fit:cover;" muted playsinline></video>
     </div>
     <div class="field">
       <label class="field-check">
@@ -661,10 +698,9 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
     <input type="hidden" id="media-id">
     <input type="hidden" id="media-type">
     <div class="field">
-      <label>URL ou caminho da foto</label>
-      <input type="text" id="media-url" placeholder="fotos/rapha/foto.jpg ou https://..." oninput="previewMediaPhoto()">
+      <label>Enviar arquivo do computador</label>
+      <input type="file" id="media-file" accept="image/*" onchange="handleMediaFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
       <img id="media-img-preview" class="img-preview" alt="Preview">
-      <small style="color:var(--muted);font-size:0.72rem;margin-top:0.3rem;display:block;">Caminho relativo (ex: <code>fotos/rapha/foto.jpg</code>) ou URL externa.</small>
     </div>
     <div class="field">
       <label>Legenda (alt)</label>
@@ -686,6 +722,41 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
 <script>
 const PASS = 'vivalamesa2026';
+
+// ── IndexedDB para vídeo/áudio (muito grandes para localStorage) ──
+const VLM_IDB = {
+  _db: null,
+  open() {
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((res, rej) => {
+      const req = indexedDB.open('vlm_media', 1);
+      req.onupgradeneeded = e => e.target.result.createObjectStore('files');
+      req.onsuccess = e => { this._db = e.target.result; res(this._db); };
+      req.onerror = () => rej(req.error);
+    });
+  },
+  async save(key, blob) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').put(blob, key);
+      tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+    });
+  },
+  async load(key) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('files', 'readonly');
+      const req = tx.objectStore('files').get(key);
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+  },
+  async toObjectURL(key) {
+    const blob = await this.load(key);
+    return blob ? URL.createObjectURL(blob) : null;
+  }
+};
 
 // ── AUTH ──
 function doLogin() {
@@ -1072,6 +1143,8 @@ let editingDishId = null;
 
 function openDishModal(id) {
   editingDishId = id || null;
+  _dishFileData = null;
+  document.getElementById('dish-file').value = '';
   document.getElementById('dish-modal-title').textContent = id ? 'Editar Prato' : 'Novo Prato';
   document.getElementById('dish-img-preview').classList.remove('show');
 
@@ -1080,7 +1153,6 @@ function openDishModal(id) {
     document.getElementById('dish-name').value = d.name;
     document.getElementById('dish-category').value = d.category;
     document.getElementById('dish-desc').value = d.desc;
-    document.getElementById('dish-image').value = d.image || '';
     document.getElementById('dish-order').value = d.order;
     document.getElementById('dish-visible').checked = d.visible;
     if (d.image) { const p = document.getElementById('dish-img-preview'); p.src = d.image; p.classList.add('show'); }
@@ -1089,28 +1161,41 @@ function openDishModal(id) {
     document.getElementById('dish-name').value = '';
     document.getElementById('dish-category').value = 'Entrada';
     document.getElementById('dish-desc').value = '';
-    document.getElementById('dish-image').value = '';
     document.getElementById('dish-order').value = dishes.length + 1;
     document.getElementById('dish-visible').checked = true;
   }
   document.getElementById('dish-modal-bg').classList.add('open');
 }
 
-function closeDishModal() { document.getElementById('dish-modal-bg').classList.remove('open'); }
-
-function previewImage() {
-  const url = document.getElementById('dish-image').value.trim();
-  const preview = document.getElementById('dish-img-preview');
-  if (url) { preview.src = url; preview.classList.add('show'); }
-  else { preview.classList.remove('show'); }
+function closeDishModal() {
+  document.getElementById('dish-modal-bg').classList.remove('open');
+  _dishFileData = null;
+  document.getElementById('dish-file').value = '';
 }
+
+let _dishFileData = null;
+
+function handleDishFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _dishFileData = e.target.result;
+    const preview = document.getElementById('dish-img-preview');
+    preview.src = _dishFileData;
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
 
 function saveDish() {
   const name = document.getElementById('dish-name').value.trim();
   if (!name) { alert('Preencha o nome do prato.'); return; }
 
   const dishes = getDishes();
-  const image = document.getElementById('dish-image').value.trim();
+  const existingImage = editingDishId ? (getDishes().find(d => d.id === editingDishId)?.image || '') : '';
+  const image = _dishFileData || existingImage;
 
   const data = {
     id: editingDishId || nextId(dishes),
@@ -1268,27 +1353,49 @@ function deleteHeroVideo(id) {
 }
 
 let editingHeroId = null;
+let _heroFile = null;
+
 function openHeroModal(id) {
   editingHeroId = id || null;
+  _heroFile = null;
+  document.getElementById('hero-file').value = '';
+  document.getElementById('hero-video-preview').style.display = 'none';
   document.getElementById('hero-modal-title').textContent = id ? 'Editar Vídeo' : 'Novo Vídeo';
   if (id) {
     const v = getHeroVideos().find(x => x.id === id);
-    document.getElementById('hero-url').value = v.url;
     document.getElementById('hero-visible').checked = v.visible;
   } else {
-    document.getElementById('hero-url').value = '';
     document.getElementById('hero-visible').checked = true;
   }
   document.getElementById('hero-modal-bg').classList.add('open');
 }
 
-function closeHeroModal() { document.getElementById('hero-modal-bg').classList.remove('open'); }
+function closeHeroModal() {
+  document.getElementById('hero-modal-bg').classList.remove('open');
+  _heroFile = null;
+}
 
-function saveHeroVideo() {
-  const url = document.getElementById('hero-url').value.trim();
-  if (!url) { alert('Informe a URL do vídeo.'); return; }
+function handleHeroFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _heroFile = file;
+  document.getElementById('hero-url').value = '';
+  const preview = document.getElementById('hero-video-preview');
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = 'block';
+}
+
+async function saveHeroVideo() {
   const vs = getHeroVideos();
-  const data = { id: editingHeroId || nextId(vs), url, visible: document.getElementById('hero-visible').checked };
+  const id = editingHeroId || nextId(vs);
+  let url = '';
+  if (_heroFile) {
+    const key = 'hero_video_' + id;
+    await VLM_IDB.save(key, _heroFile);
+    url = 'idb:' + key;
+  }
+  if (!url) { alert('Selecione um arquivo de vídeo.'); return; }
+  const data = { id, url, visible: document.getElementById('hero-visible').checked };
   if (editingHeroId) { const i = vs.findIndex(x => x.id === editingHeroId); vs[i] = data; }
   else { vs.push(data); }
   saveHeroVideos(vs); closeHeroModal(); renderHeroList();
@@ -1351,38 +1458,52 @@ function moveMedia(type, id, dir) {
   saveMediaData(type, arr); renderMediaList(type);
 }
 
+let _mediaFileData = null;
+
 function openMediaModal(type, id) {
   currentMediaType = type;
   editingMediaId = id || null;
+  _mediaFileData = null;
+  document.getElementById('media-file').value = '';
   const label = type === 'experiencia' ? 'Foto — A Experiência' : 'Foto — Edições Anteriores';
   document.getElementById('media-modal-title').textContent = id ? `Editar ${label}` : `Nova ${label}`;
   document.getElementById('media-type').value = type;
   document.getElementById('media-img-preview').classList.remove('show');
   if (id) {
     const p = getMediaData(type).find(x => x.id === id);
-    document.getElementById('media-url').value = p.url;
     document.getElementById('media-alt').value = p.alt || '';
     document.getElementById('media-visible').checked = p.visible;
     if (p.url) { const prev = document.getElementById('media-img-preview'); prev.src = p.url; prev.classList.add('show'); }
   } else {
-    document.getElementById('media-url').value = '';
     document.getElementById('media-alt').value = '';
     document.getElementById('media-visible').checked = true;
   }
   document.getElementById('media-modal-bg').classList.add('open');
 }
 
-function closeMediaModal() { document.getElementById('media-modal-bg').classList.remove('open'); }
-
-function previewMediaPhoto() {
-  const url = document.getElementById('media-url').value.trim();
-  const preview = document.getElementById('media-img-preview');
-  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+function closeMediaModal() {
+  document.getElementById('media-modal-bg').classList.remove('open');
+  _mediaFileData = null;
 }
 
+function handleMediaFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _mediaFileData = e.target.result;
+    const preview = document.getElementById('media-img-preview');
+    preview.src = _mediaFileData;
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+
 function saveMediaPhoto() {
-  const url = document.getElementById('media-url').value.trim();
-  if (!url) { alert('Informe a URL ou caminho da foto.'); return; }
+  const existingUrl = editingMediaId ? (getMediaData(document.getElementById('media-type').value).find(x => x.id === editingMediaId)?.url || '') : '';
+  const url = _mediaFileData || existingUrl;
+  if (!url) { alert('Selecione um arquivo de foto.'); return; }
   const type = document.getElementById('media-type').value;
   const arr = getMediaData(type);
   const data = {
@@ -1398,58 +1519,82 @@ function saveMediaPhoto() {
 }
 
 // ── LOGO ──
+const _logoFileData = { nav: null, footer: null };
+
 function renderLogoPanel() {
-  const src = localStorage.getItem('vlm_logo') || 'fotos/logo/Logo.jpg';
-  const input = document.getElementById('logo-input');
-  const preview = document.getElementById('logo-preview');
-  if (input) input.value = src;
-  if (preview && src) { preview.src = src; preview.classList.add('show'); }
+  ['nav', 'footer'].forEach(function(slot) {
+    const src = localStorage.getItem('vlm_logo_' + slot) || localStorage.getItem('vlm_logo') || 'fotos/logo/Logo.jpg';
+    const preview = document.getElementById('logo-' + slot + '-preview');
+    if (preview && src) { preview.src = src; preview.classList.add('show'); }
+  });
 }
 
-function previewLogo() {
-  const url = document.getElementById('logo-input').value.trim();
-  const preview = document.getElementById('logo-preview');
-  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+function handleLogoFile(slot, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _logoFileData[slot] = e.target.result;
+    const preview = document.getElementById('logo-' + slot + '-preview');
+    preview.src = _logoFileData[slot];
+    preview.classList.add('show');
+    document.getElementById('logo-' + slot + '-input').value = '';
+  };
+  reader.readAsDataURL(file);
 }
 
-function saveLogo() {
-  const url = document.getElementById('logo-input').value.trim();
-  if (!url) { alert('Informe a URL ou caminho da logo.'); return; }
-  localStorage.setItem('vlm_logo', url);
+function saveLogo(slot) {
+  const src = _logoFileData[slot];
+  if (!src) { alert('Selecione um arquivo de imagem.'); return; }
+  localStorage.setItem('vlm_logo_' + slot, src);
+  _logoFileData[slot] = null;
   toast('Logo salva!');
 }
 
 // ── FOTO DO CHEF ──
+let _chefFileData = null;
+
 function renderChefPanel() {
   const photo = localStorage.getItem('vlm_chef_photo') || DEFAULT_CHEF_PHOTO;
-  const input = document.getElementById('chef-photo-input');
   const preview = document.getElementById('chef-photo-preview');
-  if (input) input.value = photo;
   if (preview && photo) { preview.src = photo; preview.classList.add('show'); }
 }
 
-function previewChefPhoto() {
-  const url = document.getElementById('chef-photo-input').value.trim();
-  const preview = document.getElementById('chef-photo-preview');
-  if (url) { preview.src = url; preview.classList.add('show'); } else { preview.classList.remove('show'); }
+function handleChefFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    _chefFileData = e.target.result;
+    const preview = document.getElementById('chef-photo-preview');
+    preview.src = _chefFileData;
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
 }
 
 function saveChefPhoto() {
-  const url = document.getElementById('chef-photo-input').value.trim();
-  if (!url) { alert('Informe a URL ou caminho da foto.'); return; }
-  localStorage.setItem('vlm_chef_photo', url);
+  const src = _chefFileData;
+  if (!src) { alert('Selecione um arquivo de foto.'); return; }
+  localStorage.setItem('vlm_chef_photo', src);
+  _chefFileData = null;
   toast('Foto do chef salva!');
 }
 
 // ── TEXTOS ──
 const TEXTO_SCHEMA = [
+  { section: 'Botões', fields: [
+    { key:'hero_cta',        label:'CTA (hero)', max:40 },
+    { key:'btn_reservar',    label:'Reservar Mesa (menu)', max:30 },
+    { key:'btn_ver_eventos', label:'Ver Eventos (seção reserva)', max:30 },
+    { key:'btn_whatsapp',    label:'WhatsApp (seção reserva)', max:30 },
+  ]},
   { section: 'Hero', fields: [
     { key:'hero_eyebrow',    label:'Eyebrow (acima do título)', max:60 },
     { key:'hero_title_1',    label:'Título — linha 1', max:30 },
     { key:'hero_title_em',   label:'Título — palavra em destaque dourado', max:20 },
     { key:'hero_title_3',    label:'Título — linha 3', max:30 },
     { key:'hero_subtitle',   label:'Subtítulo', max:80 },
-    { key:'hero_cta',        label:'Botão CTA', max:40 },
   ]},
   { section: 'A Experiência', fields: [
     { key:'exp_label',       label:'Nome da seção', max:40 },
@@ -1509,12 +1654,19 @@ const TEXTO_SCHEMA = [
     { key:'reserva_p',        label:'Texto', max:250, multiline:true },
   ]},
   { section: 'Rodapé', fields: [
-    { key:'footer_tagline', label:'Tagline', max:60 },
+    { key:'footer_desc',        label:'Descrição', max:200, multiline:true },
+    { key:'footer_copyright',   label:'Copyright', max:100 },
+    { key:'footer_tagline',     label:'Tagline (direita)', max:60 },
+    { key:'footer_nav_exp',     label:'Nav — A Experiência', max:40 },
+    { key:'footer_nav_eventos', label:'Nav — Próximos Eventos', max:40 },
+    { key:'footer_nav_cardapio',label:'Nav — Cardápio', max:40 },
+    { key:'footer_nav_chef',    label:'Nav — O Chef', max:40 },
+    { key:'footer_nav_reservar',label:'Nav — Reservar Vaga', max:40 },
   ]},
 ];
 
 const DEFAULT_TEXTO_VALUES = {
-  hero_eyebrow:'Experiência Gastronômica Exclusiva', hero_title_1:'Uma noite que', hero_title_em:'nunca', hero_title_3:'vai esquecer', hero_subtitle:'Cozinha que reúne. Histórias que ficam.', hero_cta:'Ver Próximos Eventos',
+  hero_eyebrow:'Experiência Gastronômica Exclusiva', hero_title_1:'Uma noite que', hero_title_em:'nunca', hero_title_3:'vai esquecer', hero_subtitle:'Cozinha que reúne. Histórias que ficam.', hero_cta:'Ver Próximos Eventos', btn_reservar:'Reservar Mesa', btn_ver_eventos:'Ver Eventos', btn_whatsapp:'Falar no WhatsApp',
   exp_label:'A Experiência', exp_title:'Não é um restaurante.', exp_title_em:'momento único.', exp_p1:'Viva La Mesa é um jantar íntimo e exclusivo, criado para um grupo seleto de pessoas que buscam mais do que uma refeição. Aqui, cada detalhe é pensado para criar uma experiência sensorial completa — do aroma ao sabor, da mesa à memória.', exp_p2:'O formato é simples e revolucionário: datas abertas por calendário, vagas limitadas a 12 convidados, cardápio revelado na véspera. Você reserva seu lugar, o Chef Raphael Gonzaga cuida de tudo o mais.', exp_p3:'Água com e sem gás estão incluídas. As bebidas alcóolicas ficam por conta dos convidados, tornando a noite ainda mais personalizada e intimista.', exp_quote:'"Tenho o prazer de receber você\nem uma noite especial."', exp_stat1_num:'12', exp_stat1_label:'Convidados por noite', exp_stat2_num:'3', exp_stat2_label:'Tempos do menu', exp_stat3_num:'100%', exp_stat3_label:'Exclusivo',
   eventos_label:'Calendário', eventos_title:'Próximos Eventos', eventos_subtitle:'As vagas são limitadas e preenchidas por ordem de reserva.\nNão deixe passar.',
   cardapio_label:'Os Pratos', cardapio_title:'Cada detalhe, uma emoção', cardapio_intro:'O cardápio muda a cada edição. O que nunca muda é o cuidado com cada ingrediente e a paixão com que cada prato é criado.',
@@ -1522,13 +1674,34 @@ const DEFAULT_TEXTO_VALUES = {
   galeria_label:'Memórias', galeria_title:'Edições Anteriores',
   como_label:'O Ritual', como_title:'Como Funciona', como_s1_title:'Escolha a Data', como_s1_desc:'Consulte o calendário de eventos e escolha a data e cidade que fazem sentido para você.', como_s2_title:'Reserve sua Vaga', como_s2_desc:'Vagas limitadas a 12 convidados por noite. Confirme sua reserva e aguarde o contato do Chef.', como_s3_title:'Cardápio Revelado', como_s3_desc:'Na véspera do jantar, você recebe o cardápio completo e todos os detalhes da noite especial.', como_s4_title:'Viva a Experiência', como_s4_desc:'Chegue, relaxe e entregue-se. O Chef Raphael cuida de absolutamente tudo. Uma noite para lembrar.',
   reserva_label:'Reserve Agora', reserva_title_1:'Sua mesa', reserva_title_em:'esperando', reserva_p:'As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.',
-  footer_tagline:'Chef Raphael Gonzaga',
+  footer_desc:'Uma experiência gastronômica exclusiva que transforma jantares em memórias. Cozinha que reúne, histórias que ficam.',
+  footer_copyright:'© 2026 Viva La Mesa. Todos os direitos reservados.',
+  footer_tagline:'Chef Raphael Gonzaga', footer_nav_exp:'A Experiência', footer_nav_eventos:'Próximos Eventos', footer_nav_cardapio:'Cardápio', footer_nav_chef:'O Chef', footer_nav_reservar:'Reservar Vaga',
 };
 
 function getStoredTexts() { try { return JSON.parse(localStorage.getItem('vlm_texts') || '{}'); } catch(e) { return {}; } }
 function getTextValue(key) { const stored = getStoredTexts(); return stored[key] !== undefined ? stored[key] : (DEFAULT_TEXTO_VALUES[key] || ''); }
 
+function renderContactPanel() {
+  const insta = localStorage.getItem('vlm_insta') || 'vivalamesa';
+  const phone = localStorage.getItem('vlm_phone') || '(48) 99624-5254';
+  const instaEl = document.getElementById('contact-insta');
+  const phoneEl = document.getElementById('contact-phone');
+  if (instaEl) instaEl.value = insta.replace(/^@/, '');
+  if (phoneEl) phoneEl.value = phone;
+}
+
+function saveContact() {
+  const insta = (document.getElementById('contact-insta').value.trim()).replace(/^@/, '');
+  const phone = document.getElementById('contact-phone').value.trim();
+  if (!insta && !phone) { alert('Preencha ao menos um campo.'); return; }
+  if (insta) localStorage.setItem('vlm_insta', insta);
+  if (phone) localStorage.setItem('vlm_phone', phone);
+  toast('Contato salvo!');
+}
+
 function renderTextosPanel() {
+  renderContactPanel();
   const container = document.getElementById('textos-container');
   if (!container) return;
   const stored = getStoredTexts();
@@ -1575,18 +1748,22 @@ function saveTexts() {
 }
 
 // ── MÚSICA ──
+let _musicFile = null;
+
 function renderMusicPanel() {
   const current = localStorage.getItem('vlm_music') || 'jazz.mp3';
-  const input = document.getElementById('music-input');
-  if (input) {
-    input.value = current;
+  if (current.startsWith('idb:')) {
+    VLM_IDB.toObjectURL(current.slice(4)).then(url => { if (url) updateMusicPreview(url); });
+  } else {
     updateMusicPreview(current);
   }
 }
 
-function previewMusic() {
-  const url = document.getElementById('music-input').value.trim();
-  updateMusicPreview(url);
+function handleMusicFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  _musicFile = file;
+  updateMusicPreview(URL.createObjectURL(file));
 }
 
 function updateMusicPreview(url) {
@@ -1599,10 +1776,11 @@ function updateMusicPreview(url) {
   player.load();
 }
 
-function saveMusic() {
-  const url = document.getElementById('music-input').value.trim();
-  if (!url) { alert('Informe a URL ou caminho do arquivo MP3.'); return; }
-  localStorage.setItem('vlm_music', url);
+async function saveMusic() {
+  if (!_musicFile) { alert('Selecione um arquivo de áudio.'); return; }
+  await VLM_IDB.save('vlm_music_file', _musicFile);
+  localStorage.setItem('vlm_music', 'idb:vlm_music_file');
+  _musicFile = null;
   toast('Música salva! Recarregue o site para ouvir.');
 }
 </script>
