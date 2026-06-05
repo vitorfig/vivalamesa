@@ -2461,6 +2461,7 @@
       hero_title_em:   { v:'nunca', max:20 },
       hero_title_3:    { v:'vai esquecer', max:30 },
       hero_subtitle:   { v:'Cozinha que reúne. Histórias que ficam.', max:80 },
+      page_title:      { v:'Viva La Mesa — Experiência Gastronômica Exclusiva', max:80 },
       hero_cta:        { v:'Ver Próximos Eventos', max:40 },
       btn_reservar:    { v:'Reservar Vaga', max:30 },
       btn_ver_eventos: { v:'Ver Eventos', max:30 },
@@ -2524,6 +2525,7 @@
         const key = el.getAttribute('data-tk');
         if (t[key] !== undefined) el.textContent = t[key];
       });
+      if (t.page_title) document.title = t.page_title;
     }
     renderTexts();
 

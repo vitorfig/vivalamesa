@@ -1777,6 +1777,9 @@ function saveChefPhoto() {
 
 // ── TEXTOS ──
 const TEXTO_SCHEMA = [
+  { section: 'Geral', fields: [
+    { key:'page_title', label:'Título da aba do navegador', max:80 },
+  ]},
   { section: 'Botões', fields: [
     { key:'hero_cta',        label:'CTA (hero)', max:40 },
     { key:'btn_reservar',    label:'Reservar Vaga (menu)', max:30 },
@@ -1860,6 +1863,7 @@ const TEXTO_SCHEMA = [
 ];
 
 const DEFAULT_TEXTO_VALUES = {
+  page_title:'Viva La Mesa — Experiência Gastronômica Exclusiva',
   hero_eyebrow:'Experiência Gastronômica Exclusiva', hero_title_1:'Uma noite que', hero_title_em:'nunca', hero_title_3:'vai esquecer', hero_subtitle:'Cozinha que reúne. Histórias que ficam.', hero_cta:'Ver Próximos Eventos', btn_reservar:'Reservar Vaga', btn_ver_eventos:'Ver Eventos', btn_whatsapp:'Falar no WhatsApp',
   exp_label:'A Experiência', exp_title:'Não é um restaurante.', exp_title_em:'momento único.', exp_p1:'Viva La Mesa é um jantar íntimo e exclusivo, criado para um grupo seleto de pessoas que buscam mais do que uma refeição. Aqui, cada detalhe é pensado para criar uma experiência sensorial completa — do aroma ao sabor, da mesa à memória.', exp_p2:'O formato é simples e revolucionário: datas abertas por calendário, vagas limitadas a 12 convidados, cardápio revelado na véspera. Você reserva seu lugar, o Chef Raphael Gonzaga cuida de tudo o mais.', exp_p3:'Água com e sem gás estão incluídas. As bebidas alcóolicas ficam por conta dos convidados, tornando a noite ainda mais personalizada e intimista.', exp_quote:'"Tenho o prazer de receber você\nem uma noite especial."', exp_stat1_num:'12', exp_stat1_label:'Convidados por noite', exp_stat2_num:'3', exp_stat2_label:'Tempos do menu', exp_stat3_num:'100%', exp_stat3_label:'Exclusivo',
   eventos_label:'Calendário', eventos_title:'Próximos Eventos', eventos_subtitle:'As vagas são limitadas e preenchidas por ordem de reserva.\nNão deixe passar.',
