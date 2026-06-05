@@ -2114,15 +2114,24 @@
     function startMusicOnInteraction() {
         if (musicStarted || userMuted) return;
         musicStarted = true;
-        ['click','touchstart','touchend'].forEach(ev =>
-            document.removeEventListener(ev, startMusicOnInteraction));
+        if (audio.readyState === 0) audio.load();
         const p = audio.play();
-        if (p) p.then(() => {
-            const fade = setInterval(() => {
-                if (audio.volume < 0.82) audio.volume = Math.min(0.82, audio.volume + 0.04);
-                else clearInterval(fade);
-            }, 80);
-        }).catch(() => { musicStarted = false; });
+        if (p) {
+            p.then(() => {
+                // Só remove listeners após play() confirmar sucesso
+                ['click','touchstart','touchend'].forEach(ev =>
+                    document.removeEventListener(ev, startMusicOnInteraction));
+                const fade = setInterval(() => {
+                    if (audio.volume < 0.82) audio.volume = Math.min(0.82, audio.volume + 0.04);
+                    else clearInterval(fade);
+                }, 80);
+            }).catch(() => {
+                musicStarted = false; // permite nova tentativa
+            });
+        } else {
+            ['click','touchstart','touchend'].forEach(ev =>
+                document.removeEventListener(ev, startMusicOnInteraction));
+        }
     }
     ['click','touchstart','touchend'].forEach(ev =>
         document.addEventListener(ev, startMusicOnInteraction, { passive: true }));
