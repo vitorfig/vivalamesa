@@ -498,6 +498,21 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
       <div class="midia-section">
         <div class="panel-header">
+          <h3>Favicon (Ícone da Aba)</h3>
+        </div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Ícone exibido na aba do navegador. Recomendado: PNG 32×32px com fundo transparente.</p>
+        <div class="field">
+          <label>Enviar arquivo do computador</label>
+          <input type="file" id="favicon-file" accept="image/*" onchange="handleFaviconFile(this)" style="font-family:inherit;font-size:0.82rem;cursor:pointer;">
+        </div>
+        <img id="favicon-preview" class="chef-preview-full" alt="Preview Favicon" style="max-height:64px;object-fit:contain;margin-top:1rem;image-rendering:pixelated;">
+        <div class="form-actions" style="margin-top:1rem;">
+          <button class="btn-save" onclick="saveFavicon()">Salvar Favicon</button>
+        </div>
+      </div>
+
+      <div class="midia-section">
+        <div class="panel-header">
           <h3>Logo do Menu</h3>
         </div>
         <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;">Logo exibida na barra de navegação.</p>
@@ -844,6 +859,7 @@ function collectPublishData() {
     hero_videos:       strip(getHeroVideos()),
     experience_photos: strip(getExperiencePhotos()),
     gallery_photos:    strip(getGalleryPhotos()),
+    favicon:     localStorage.getItem('vlm_favicon') || null,
     logo_nav:    logoNav    || null,
     logo_footer: logoFooter || null,
     chef_photo:  chef  || null,
@@ -981,7 +997,7 @@ function switchTab(name, btn) {
   if (label) label.textContent = btn.textContent;
 }
 
-function renderAll() { renderScarcityTable(); renderEventList(); renderReservasList(); renderDishList(); renderLogoPanel(); renderHeroList(); renderExperienciaList(); renderGaleriaList(); renderChefPanel(); renderMusicPanel(); renderTextosPanel(); }
+function renderAll() { renderScarcityTable(); renderEventList(); renderReservasList(); renderDishList(); renderFaviconPanel(); renderLogoPanel(); renderHeroList(); renderExperienciaList(); renderGaleriaList(); renderChefPanel(); renderMusicPanel(); renderTextosPanel(); }
 
 // ── DATE HELPERS ──
 const MONTHS_PT_NAME = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -1676,6 +1692,32 @@ function saveMediaPhoto() {
   toast(editingMediaId ? 'Foto atualizada!' : 'Foto adicionada!');
 }
 
+
+// ── FAVICON ──
+let _faviconUrl = null;
+
+function renderFaviconPanel() {
+  const src = localStorage.getItem('vlm_favicon');
+  const preview = document.getElementById('favicon-preview');
+  if (preview && src) { preview.src = src; preview.classList.add('show'); }
+}
+
+function handleFaviconFile(input) {
+  const file = input.files[0]; if (!file) return;
+  const preview = document.getElementById('favicon-preview');
+  preview.src = URL.createObjectURL(file); preview.classList.add('show');
+  onUploadStart();
+  uploadToCloudinary(file).then(url => {
+    _faviconUrl = url; onUploadEnd(); toast('Favicon enviado ✓');
+  }).catch(e => { onUploadEnd(); toast('❌ Erro: ' + e.message); });
+}
+
+function saveFavicon() {
+  if (!_faviconUrl) { alert('Selecione um arquivo e aguarde o upload terminar.'); return; }
+  localStorage.setItem('vlm_favicon', _faviconUrl);
+  _faviconUrl = null;
+  toast('Favicon salvo!');
+}
 
 // ── LOGO ──
 const _logoFileData = { nav: null, footer: null };

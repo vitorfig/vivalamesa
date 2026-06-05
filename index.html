@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viva La Mesa — Experiência Gastronômica Exclusiva</title>
+    <link rel="icon" id="site-favicon" href="fotos/logo/Logo.jpg" type="image/jpeg">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2459,6 +2460,12 @@
       }
     })();
 
+    // Aplica favicon do localStorage imediatamente
+    (function() {
+      const fav = localStorage.getItem('vlm_favicon');
+      if (fav) { const el = document.getElementById('site-favicon'); if (el) el.href = fav; }
+    })();
+
     renderEvents();
     renderDishes();
 
@@ -2481,11 +2488,13 @@
         if (d.logo_footer)       localStorage.setItem('vlm_logo_footer',       d.logo_footer);
         if (d.chef_photo)        localStorage.setItem('vlm_chef_photo',        d.chef_photo);
         if (d.music && !d.music.startsWith('idb:')) localStorage.setItem('vlm_music', d.music);
-        // Aplica logos imediatamente
+        // Aplica logos e favicon imediatamente
         const navLogo    = document.getElementById('nav-logo');
         const footerLogo = document.getElementById('footer-logo');
+        const faviconEl  = document.getElementById('site-favicon');
         if (d.logo_nav    && navLogo)    navLogo.src    = d.logo_nav;
         if (d.logo_footer && footerLogo) footerLogo.src = d.logo_footer;
+        if (d.favicon     && faviconEl)  { faviconEl.href = d.favicon; localStorage.setItem('vlm_favicon', d.favicon); }
         // Re-renderiza com dados atualizados
         renderEvents();
         renderDishes();
