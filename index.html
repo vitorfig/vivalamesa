@@ -2109,19 +2109,24 @@
         }
     });
 
-    // Inicia música no primeiro clique ou scroll (necessário por política do navegador)
+    // Inicia música no primeiro clique/toque (play() deve ser síncrono para iOS)
     let musicStarted = false;
     function startMusicOnInteraction() {
         if (musicStarted || userMuted) return;
         musicStarted = true;
-        fadeIn();
-        document.removeEventListener('click',      startMusicOnInteraction);
-        document.removeEventListener('scroll',     startMusicOnInteraction, { passive: true });
-        document.removeEventListener('touchstart', startMusicOnInteraction, { passive: true });
+        document.removeEventListener('click',    startMusicOnInteraction);
+        document.removeEventListener('touchend', startMusicOnInteraction);
+        audio.volume = 0;
+        const p = audio.play();
+        if (p) p.then(() => {
+            const fade = setInterval(() => {
+                if (audio.volume < 0.82) audio.volume = Math.min(0.82, audio.volume + 0.04);
+                else clearInterval(fade);
+            }, 80);
+        }).catch(() => { musicStarted = false; });
     }
-    document.addEventListener('click',      startMusicOnInteraction);
-    document.addEventListener('scroll',     startMusicOnInteraction, { passive: true });
-    document.addEventListener('touchstart', startMusicOnInteraction, { passive: true });
+    document.addEventListener('click',    startMusicOnInteraction);
+    document.addEventListener('touchend', startMusicOnInteraction);
 
     // ── MODAL ──
     function openModal(label, eventoValue) {
