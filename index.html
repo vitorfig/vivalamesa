@@ -1467,7 +1467,7 @@
 </head>
 <body>
 
-<audio id="jazz-audio" loop preload="auto" autoplay>
+<audio id="jazz-audio" loop preload="auto">
     <source id="jazz-src" src="jazz.mp3" type="audio/mpeg">
 </audio>
 
@@ -2109,14 +2109,13 @@
         }
     });
 
-    // Inicia música no primeiro clique/toque (play() deve ser síncrono para iOS)
+    // Inicia música no primeiro clique/toque
     let musicStarted = false;
     function startMusicOnInteraction() {
         if (musicStarted || userMuted) return;
         musicStarted = true;
-        document.removeEventListener('click',    startMusicOnInteraction);
-        document.removeEventListener('touchend', startMusicOnInteraction);
-        audio.volume = 0;
+        ['click','touchstart','touchend'].forEach(ev =>
+            document.removeEventListener(ev, startMusicOnInteraction));
         const p = audio.play();
         if (p) p.then(() => {
             const fade = setInterval(() => {
@@ -2125,8 +2124,8 @@
             }, 80);
         }).catch(() => { musicStarted = false; });
     }
-    document.addEventListener('click',    startMusicOnInteraction);
-    document.addEventListener('touchend', startMusicOnInteraction);
+    ['click','touchstart','touchend'].forEach(ev =>
+        document.addEventListener(ev, startMusicOnInteraction, { passive: true }));
 
     // ── MODAL ──
     function openModal(label, eventoValue) {
