@@ -2109,6 +2109,20 @@
         }
     });
 
+    // Inicia música no primeiro clique ou scroll (necessário por política do navegador)
+    let musicStarted = false;
+    function startMusicOnInteraction() {
+        if (musicStarted || userMuted) return;
+        musicStarted = true;
+        fadeIn();
+        document.removeEventListener('click',      startMusicOnInteraction);
+        document.removeEventListener('scroll',     startMusicOnInteraction, { passive: true });
+        document.removeEventListener('touchstart', startMusicOnInteraction, { passive: true });
+    }
+    document.addEventListener('click',      startMusicOnInteraction);
+    document.addEventListener('scroll',     startMusicOnInteraction, { passive: true });
+    document.addEventListener('touchstart', startMusicOnInteraction, { passive: true });
+
     // ── MODAL ──
     function openModal(label, eventoValue) {
         const overlay = document.getElementById('modal-overlay');
