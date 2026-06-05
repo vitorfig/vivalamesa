@@ -102,6 +102,82 @@
             border-color: var(--gold) !important;
         }
 
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.4rem;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .nav-drawer-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+        }
+        .nav-drawer-bg.open { display: block; }
+
+        .nav-drawer {
+            position: absolute;
+            top: 0; right: 0;
+            width: 75%; max-width: 300px;
+            height: 100%;
+            background: var(--green-dark);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .nav-drawer-close {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+            margin-bottom: 2rem;
+        }
+        .nav-drawer ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .nav-drawer ul li a {
+            display: block;
+            padding: 1rem 0;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            transition: color 0.2s;
+        }
+        .nav-drawer ul li a:hover { color: var(--gold-light); }
+        .nav-drawer ul li:last-child a {
+            margin-top: 1.5rem;
+            border: 1px solid var(--gold-light);
+            color: var(--gold-light);
+            text-align: center;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--gold-light);
+        }
+
         /* ============================
            HERO
            ============================ */
@@ -1329,6 +1405,7 @@
             nav { padding: 1.2rem 2rem; }
             nav.scrolled { padding: 1rem 2rem; }
             .nav-links { display: none; }
+            .nav-hamburger { display: flex; }
 
             .manifesto-grid,
             .chef-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -1409,13 +1486,30 @@
 <nav id="navbar">
     <img src="fotos/logo/Logo.jpg" alt="Viva La Mesa" class="nav-logo" id="nav-logo">
     <ul class="nav-links">
-        <li><a href="#experiencia">A Experiência</a></li>
-        <li><a href="#eventos">Próximos Eventos</a></li>
-        <li><a href="#cardapio">Cardápio</a></li>
-        <li><a href="#chef">O Chef</a></li>
+        <li><a href="#experiencia" data-tk="footer_nav_exp">A Experiência</a></li>
+        <li><a href="#eventos" data-tk="footer_nav_eventos">Próximos Eventos</a></li>
+        <li><a href="#cardapio" data-tk="footer_nav_cardapio">Cardápio</a></li>
+        <li><a href="#chef" data-tk="footer_nav_chef">O Chef</a></li>
         <li><a href="#eventos" class="nav-reserve" data-tk="btn_reservar">Reservar Vaga</a></li>
     </ul>
+    <button class="nav-hamburger" id="nav-hamburger" onclick="openNavDrawer()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
 </nav>
+
+<!-- DRAWER MOBILE -->
+<div class="nav-drawer-bg" id="nav-drawer-bg" onclick="closeNavDrawer()">
+    <div class="nav-drawer" onclick="event.stopPropagation()">
+        <button class="nav-drawer-close" onclick="closeNavDrawer()">×</button>
+        <ul>
+            <li><a href="#experiencia" onclick="closeNavDrawer()" data-tk="footer_nav_exp">A Experiência</a></li>
+            <li><a href="#eventos" onclick="closeNavDrawer()" data-tk="footer_nav_eventos">Próximos Eventos</a></li>
+            <li><a href="#cardapio" onclick="closeNavDrawer()" data-tk="footer_nav_cardapio">Cardápio</a></li>
+            <li><a href="#chef" onclick="closeNavDrawer()" data-tk="footer_nav_chef">O Chef</a></li>
+            <li><a href="#eventos" onclick="closeNavDrawer()" data-tk="btn_reservar">Reservar Vaga</a></li>
+        </ul>
+    </div>
+</div>
 
 <!-- ========================================================
      HERO
@@ -1940,6 +2034,10 @@
     window.addEventListener('scroll', () => {
         navbar.classList.toggle('scrolled', window.scrollY > 80);
     }, { passive: true });
+
+    // ── NAV DRAWER MOBILE ──
+    function openNavDrawer()  { document.getElementById('nav-drawer-bg').classList.add('open'); }
+    function closeNavDrawer() { document.getElementById('nav-drawer-bg').classList.remove('open'); }
 
     // ── REVEAL ON SCROLL ──
     const reveals = document.querySelectorAll('.reveal');
