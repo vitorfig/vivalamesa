@@ -1853,7 +1853,6 @@ const TEXTO_SCHEMA = [
   { section: 'Rodapé', fields: [
     { key:'footer_desc',        label:'Descrição', max:200, multiline:true },
     { key:'footer_copyright',   label:'Copyright', max:100 },
-    { key:'footer_tagline',     label:'Tagline (direita)', max:60 },
     { key:'footer_nav_exp',     label:'Nav — A Experiência', max:40 },
     { key:'footer_nav_eventos', label:'Nav — Próximos Eventos', max:40 },
     { key:'footer_nav_cardapio',label:'Nav — Cardápio', max:40 },
@@ -1874,7 +1873,7 @@ const DEFAULT_TEXTO_VALUES = {
   reserva_label:'Reserve Agora', reserva_title_1:'Sua mesa', reserva_title_em:'esperando', reserva_p:'As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.',
   footer_desc:'Uma experiência gastronômica exclusiva que transforma jantares em memórias. Cozinha que reúne, histórias que ficam.',
   footer_copyright:'© 2026 Viva La Mesa. Todos os direitos reservados.',
-  footer_tagline:'Chef Raphael Gonzaga', footer_nav_exp:'A Experiência', footer_nav_eventos:'Próximos Eventos', footer_nav_cardapio:'Cardápio', footer_nav_chef:'O Chef', footer_nav_reservar:'Reservar Vaga',
+  footer_nav_exp:'A Experiência', footer_nav_eventos:'Próximos Eventos', footer_nav_cardapio:'Cardápio', footer_nav_chef:'O Chef', footer_nav_reservar:'Reservar Vaga',
 };
 
 function getStoredTexts() { try { return JSON.parse(localStorage.getItem('vlm_texts') || '{}'); } catch(e) { return {}; } }

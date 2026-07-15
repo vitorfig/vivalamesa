@@ -1364,18 +1364,13 @@
             font-size: 0.95rem;
         }
 
-        .footer-credit {
-            text-align: center;
-            padding-top: 1.5rem;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.25);
-        }
-
-        .footer-credit a {
+        .footer-tagline a {
             color: rgba(255,255,255,0.4);
             text-decoration: none;
             transition: color 0.3s;
         }
+
+        .footer-tagline a:hover { color: var(--gold-light); }
 
         .footer-credit a:hover { color: var(--gold-light); }
 
@@ -1948,10 +1943,7 @@
         </div>
         <div class="footer-bottom">
             <span data-tk="footer_copyright">© 2026 Viva La Mesa. Todos os direitos reservados.</span>
-            <span class="footer-tagline" data-tk="footer_tagline">Chef Raphael Gonzaga</span>
-        </div>
-        <div class="footer-credit">
-            Site desenvolvido sob medida pela <a href="https://desbrava.co" target="_blank" rel="noopener">Desbrava.co</a>
+            <span class="footer-tagline">Site desenvolvido sob medida pela <a href="https://desbrava.co" target="_blank" rel="noopener">Desbrava.co</a></span>
         </div>
     </div>
 </footer>
@@ -2554,7 +2546,6 @@
       reserva_title_1: { v:'Sua mesa', max:40 },
       reserva_title_em:{ v:'esperando', max:30 },
       reserva_p:       { v:'As vagas são limitadas e preenchidas por ordem de inscrição. Não deixe passar a oportunidade de viver uma experiência gastronômica verdadeiramente única.', max:250 },
-      footer_tagline:  { v:'Chef Raphael Gonzaga', max:60 },
       footer_nav_exp:      { v:'A Experiência', max:40 },
       footer_nav_eventos:  { v:'Próximos Eventos', max:40 },
       footer_nav_cardapio: { v:'Cardápio', max:40 },
