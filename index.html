@@ -1942,7 +1942,6 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span data-tk="footer_copyright">© 2026 Viva La Mesa. Todos os direitos reservados.</span>
             <span class="footer-tagline">Site desenvolvido sob medida pela <a href="https://desbrava.co" target="_blank" rel="noopener">Desbrava.co</a></span>
         </div>
     </div>
@@ -2552,7 +2551,6 @@
       footer_nav_chef:     { v:'O Chef', max:40 },
       footer_nav_reservar: { v:'Reservar Vaga', max:40 },
       footer_desc:     { v:'Uma experiência gastronômica exclusiva que transforma jantares em memórias. Cozinha que reúne, histórias que ficam.', max:200 },
-      footer_copyright:{ v:'© 2026 Viva La Mesa. Todos os direitos reservados.', max:100 },
     };
     function getTexts() { try { return Object.assign({}, ...Object.entries(DEFAULT_TEXTS).map(([k,d])=>({[k]:d.v})), JSON.parse(localStorage.getItem('vlm_texts')||'{}')); } catch(e) { return Object.fromEntries(Object.entries(DEFAULT_TEXTS).map(([k,d])=>[k,d.v])); } }
     function renderTexts() {
