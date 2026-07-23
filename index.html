@@ -2181,7 +2181,7 @@
         document.getElementById('res-pessoas').value = '';
 
         // Popula select de eventos dinamicamente
-        const events = getEvents().filter(e => e.visible);
+        const events = getEvents().filter(e => e.visible && e.inscricaoAberta !== false);
         select.innerHTML = '<option value="">Selecione o evento</option>' +
             events.map(ev => `<option value="${ev.id}">${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state} · ${ev.title}</option>`).join('');
 
@@ -2261,7 +2261,7 @@
         // EmailJS faz escape HTML das variáveis (ex: "/" vira "&#x2F;"), o que
         // quebra o assunto do e-mail (texto puro, não HTML). Troca a barra da
         // data por "de" só para exibição no e-mail.
-        const eventoEmail = (reserva.eventoLabel || '').replace('/', ' de ');
+        const eventoEmail = (reserva.eventoLabel || '').replace('/', ' de ').replace(/—/g, '|');
         const [anoNasc, mesNasc, diaNasc] = (reserva.nascimento || '').split('-');
         const nascimentoEmail = (diaNasc && mesNasc && anoNasc) ? `${diaNasc}/${mesNasc}/${anoNasc}` : (reserva.nascimento || '');
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
@@ -2496,8 +2496,12 @@
           </div>
           <div class="evento-right">
             <div class="evento-price">R$${ev.price} <small>/ pessoa</small></div>
-            ${(()=>{const v=getDisplayVagas(ev);return `<span class="vagas-badge ${v<=2?'critico':'normal'}">${v<=2?'⚡ ':''}${v} vaga${v!==1?'s':''} ${v<=2?'restante':'disponíveis'}</span>`})()}
-            <button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>
+            ${ev.inscricaoAberta === false
+              ? `<span class="vagas-badge" style="background:var(--cream-dark);color:var(--text-mid);border:1px solid #DAD3C2;">Inscrições encerradas</span>`
+              : (()=>{const v=getDisplayVagas(ev);return `<span class="vagas-badge ${v<=2?'critico':'normal'}">${v<=2?'⚡ ':''}${v} vaga${v!==1?'s':''} ${v<=2?'restante':'disponíveis'}</span>`})()}
+            ${ev.inscricaoAberta === false
+              ? `<button class="btn-reservar" disabled style="opacity:0.5;cursor:not-allowed;" title="Inscrições encerradas para este evento">Indisponível</button>`
+              : `<button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>`}
           </div>
         </div>`).join('');
       document.querySelectorAll('#eventos-grid .reveal').forEach(el => revealObserver.observe(el));

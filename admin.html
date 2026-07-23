@@ -694,14 +694,18 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
       <div class="dishes-input-list" id="ev-dishes-list"></div>
       <button class="add-dish-row" onclick="addDishRow()">+ Adicionar prato</button>
     </div>
-    <div class="field" style="display:flex;gap:2rem;">
+    <div class="field" style="display:flex;gap:2rem;flex-wrap:wrap;">
       <label class="field-check">
         <input type="checkbox" id="ev-urgente"> Marcar como urgente
       </label>
       <label class="field-check">
         <input type="checkbox" id="ev-visible" checked> Visível no site
       </label>
+      <label class="field-check">
+        <input type="checkbox" id="ev-inscricao-aberta" checked> Habilitar inscrição ao público
+      </label>
     </div>
+    <small style="color:var(--muted);font-size:0.72rem;margin-top:-0.6rem;display:block;">Desmarcado: o evento continua aparecendo no site, mas sem o botão de reservar (evento fechado).</small>
     <div class="form-actions">
       <button class="btn-cancel" onclick="closeEventModal()">Cancelar</button>
       <button class="btn-save" onclick="saveEvent()">Salvar Evento</button>
@@ -1151,12 +1155,13 @@ function renderEventList() {
           📍 ${ev.city}, ${ev.state} &nbsp;·&nbsp; R$${ev.price}/pessoa
           ${ev.urgente ? '&nbsp;·&nbsp;<span class="item-tag urgente">Urgente</span>' : ''}
           ${!ev.visible ? '&nbsp;·&nbsp;<span class="item-tag" style="background:#eee;color:#999;">Oculto</span>' : ''}
+          ${ev.inscricaoAberta === false ? '&nbsp;·&nbsp;<span class="item-tag" style="background:#FFF0ED;color:var(--terra);">Inscrição fechada</span>' : ''}
         </div>
         <div class="item-meta" style="margin-top:4px;display:flex;gap:1rem;flex-wrap:wrap;">
           <span title="Capacidade total">🪑 Total: <strong>${total}</strong></span>
           <span title="Reservas confirmadas">📋 Reservas: <strong>${reservasCount}</strong></span>
           <span title="Vagas reais restantes" style="color:${realRemaining<=2?'var(--terra)':'inherit'}">✅ Restantes: <strong>${realRemaining}</strong></span>
-          <span title="Número exibido no site (escassez automática)" style="color:var(--gold);font-weight:700;">👁 Site mostrará: <strong>${displayed} vaga${displayed!==1?'s':''}</strong></span>
+          <span title="Número exibido no site (escassez automática)" style="color:var(--gold);font-weight:700;">👁 Site mostrará: <strong>${ev.inscricaoAberta === false ? 'Inscrições encerradas' : `${displayed} vaga${displayed!==1?'s':''}`}</strong></span>
         </div>
         <div class="item-meta" style="margin-top:2px;">${ev.dishes.join(' · ')}</div>
       </div>
@@ -1210,6 +1215,7 @@ function openEventModal(id) {
     document.getElementById('ev-vagas').value = ev.vagas_total || ev.vagas || 12;
     document.getElementById('ev-urgente').checked = ev.urgente;
     document.getElementById('ev-visible').checked = ev.visible;
+    document.getElementById('ev-inscricao-aberta').checked = ev.inscricaoAberta !== false;
     renderDishRows(ev.dishes);
   } else {
     document.getElementById('ev-date').value = '';
@@ -1221,6 +1227,7 @@ function openEventModal(id) {
     document.getElementById('ev-vagas').value = 12;
     document.getElementById('ev-urgente').checked = false;
     document.getElementById('ev-visible').checked = true;
+    document.getElementById('ev-inscricao-aberta').checked = true;
     renderDishRows(['','','']);
   }
   document.getElementById('event-modal-bg').classList.add('open');
@@ -1269,7 +1276,8 @@ function saveEvent() {
     price: parseInt(document.getElementById('ev-price').value) || 0,
     vagas_total: parseInt(document.getElementById('ev-vagas').value) || 12,
     urgente: document.getElementById('ev-urgente').checked,
-    visible: document.getElementById('ev-visible').checked
+    visible: document.getElementById('ev-visible').checked,
+    inscricaoAberta: document.getElementById('ev-inscricao-aberta').checked
   };
 
   if (editingEventId) {
