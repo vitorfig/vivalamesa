@@ -1161,7 +1161,7 @@ function renderEventList() {
           <span title="Capacidade total">🪑 Total: <strong>${total}</strong></span>
           <span title="Reservas confirmadas">📋 Reservas: <strong>${reservasCount}</strong></span>
           <span title="Vagas reais restantes" style="color:${realRemaining<=2?'var(--terra)':'inherit'}">✅ Restantes: <strong>${realRemaining}</strong></span>
-          <span title="Número exibido no site (escassez automática)" style="color:var(--gold);font-weight:700;">👁 Site mostrará: <strong>${ev.inscricaoAberta === false ? 'Inscrições encerradas' : `${displayed} vaga${displayed!==1?'s':''}`}</strong></span>
+          <span title="O site não mostra número de vagas, só o estado do botão" style="color:var(--gold);font-weight:700;">👁 Site mostrará: <strong>${ev.inscricaoAberta === false ? 'Evento Fechado' : (displayed === 0 ? 'Vagas Esgotadas' : 'Botão Reservar ativo')}</strong></span>
         </div>
         <div class="item-meta" style="margin-top:2px;">${ev.dishes.join(' · ')}</div>
       </div>

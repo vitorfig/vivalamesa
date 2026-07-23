@@ -1640,7 +1640,6 @@
                 </div>
                 <div class="evento-right">
                     <div class="evento-price">R$150 <small>/ pessoa</small></div>
-                    <span class="vagas-badge critico">⚡ 1 vaga restante</span>
                     <button class="btn-reservar" onclick="openModal('15/05 — Florianópolis, SC', '15/05 - Florianópolis')">Reservar Agora</button>
                 </div>
             </div>
@@ -1666,7 +1665,6 @@
                 </div>
                 <div class="evento-right">
                     <div class="evento-price">R$180 <small>/ pessoa</small></div>
-                    <span class="vagas-badge normal">8 vagas disponíveis</span>
                     <button class="btn-reservar" onclick="openModal('29/05 — Curitiba, PR', '29/05 - Curitiba')">Reservar</button>
                 </div>
             </div>
@@ -1692,7 +1690,6 @@
                 </div>
                 <div class="evento-right">
                     <div class="evento-price">R$150 <small>/ pessoa</small></div>
-                    <span class="vagas-badge normal">12 vagas disponíveis</span>
                     <button class="btn-reservar" onclick="openModal('12/06 — Porto Alegre, RS', '12/06 - Porto Alegre')">Reservar</button>
                 </div>
             </div>
@@ -1718,7 +1715,6 @@
                 </div>
                 <div class="evento-right">
                     <div class="evento-price">R$200 <small>/ pessoa</small></div>
-                    <span class="vagas-badge normal">14 vagas disponíveis</span>
                     <button class="btn-reservar" onclick="openModal('26/06 — São Paulo, SP', '26/06 - São Paulo')">Reservar</button>
                 </div>
             </div>
@@ -1744,7 +1740,6 @@
                 </div>
                 <div class="evento-right">
                     <div class="evento-price">R$200 <small>/ pessoa</small></div>
-                    <span class="vagas-badge normal">16 vagas disponíveis</span>
                     <button class="btn-reservar" onclick="openModal('10/07 — Rio de Janeiro, RJ', '10/07 - Rio de Janeiro')">Reservar</button>
                 </div>
             </div>
@@ -2202,7 +2197,7 @@
         document.getElementById('res-pessoas').value = '';
 
         // Popula select de eventos dinamicamente
-        const events = getEvents().filter(e => e.visible && e.inscricaoAberta !== false);
+        const events = getEvents().filter(e => e.visible && e.inscricaoAberta !== false && getDisplayVagas(e) !== 0);
         select.innerHTML = '<option value="">Selecione o evento</option>' +
             events.map(ev => `<option value="${ev.id}">${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state} · ${ev.title}</option>`).join('');
 
@@ -2521,11 +2516,10 @@
           <div class="evento-right">
             <div class="evento-price">R$${ev.price} <small>/ pessoa</small></div>
             ${ev.inscricaoAberta === false
-              ? `<span class="vagas-badge" style="background:var(--cream-dark);color:var(--text-mid);border:1px solid #DAD3C2;">🔒 Evento Fechado</span>`
-              : (()=>{const v=getDisplayVagas(ev);return `<span class="vagas-badge ${v<=2?'critico':'normal'}">${v<=2?'⚡ ':''}${v} vaga${v!==1?'s':''} ${v<=2?'restante':'disponíveis'}</span>`})()}
-            ${ev.inscricaoAberta === false
               ? `<button class="btn-reservar" disabled style="opacity:0.5;cursor:not-allowed;" title="Evento fechado para inscrições">Evento Fechado</button>`
-              : `<button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>`}
+              : getDisplayVagas(ev) === 0
+                ? `<button class="btn-reservar" disabled style="opacity:0.5;cursor:not-allowed;" title="Não há mais vagas para este evento">Vagas Esgotadas</button>`
+                : `<button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>`}
           </div>
         </div>`).join('');
       document.querySelectorAll('#eventos-grid .reveal').forEach(el => revealObserver.observe(el));
