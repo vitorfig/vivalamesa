@@ -742,6 +742,27 @@
             border-radius: 2px;
         }
 
+        .status-tag {
+            display: inline-block;
+            align-self: flex-start;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+        .status-tag.aberto {
+            background: #EEF5EE;
+            color: var(--green-mid);
+            border: 1px solid #B5D4B5;
+        }
+        .status-tag.fechado {
+            background: #FFF0ED;
+            color: var(--terra);
+            border: 1px solid #F5C4B8;
+        }
+
         .evento-right {
             padding: 1.8rem 2.5rem;
             display: flex;
@@ -2491,16 +2512,19 @@
               <svg width="9" height="12" viewBox="0 0 9 12" fill="none"><path d="M4.5 0C2.01 0 0 2.01 0 4.5c0 3.375 4.5 7.5 4.5 7.5s4.5-4.125 4.5-7.5C9 2.01 6.99 0 4.5 0zm0 6.75a2.25 2.25 0 110-4.5 2.25 2.25 0 010 4.5z" fill="currentColor"/></svg>
               ${ev.city} — ${ev.state}
             </div>
+            ${ev.inscricaoAberta === false
+              ? `<span class="status-tag fechado">🔒 Evento Fechado</span>`
+              : `<span class="status-tag aberto">🔓 Aberto ao Público</span>`}
             <div class="evento-menu-title">${ev.title}</div>
             <div class="evento-pratos">${ev.dishes.map(d => `<span class="prato-tag">${d}</span>`).join('')}</div>
           </div>
           <div class="evento-right">
             <div class="evento-price">R$${ev.price} <small>/ pessoa</small></div>
             ${ev.inscricaoAberta === false
-              ? `<span class="vagas-badge" style="background:var(--cream-dark);color:var(--text-mid);border:1px solid #DAD3C2;">Inscrições encerradas</span>`
+              ? `<span class="vagas-badge" style="background:var(--cream-dark);color:var(--text-mid);border:1px solid #DAD3C2;">🔒 Evento Fechado</span>`
               : (()=>{const v=getDisplayVagas(ev);return `<span class="vagas-badge ${v<=2?'critico':'normal'}">${v<=2?'⚡ ':''}${v} vaga${v!==1?'s':''} ${v<=2?'restante':'disponíveis'}</span>`})()}
             ${ev.inscricaoAberta === false
-              ? `<button class="btn-reservar" disabled style="opacity:0.5;cursor:not-allowed;" title="Inscrições encerradas para este evento">Indisponível</button>`
+              ? `<button class="btn-reservar" disabled style="opacity:0.5;cursor:not-allowed;" title="Evento fechado para inscrições">Evento Fechado</button>`
               : `<button class="btn-reservar" onclick="openModal('${ev.day}/${ev.month.split(' ')[0]} — ${ev.city}, ${ev.state}', '')">Reservar</button>`}
           </div>
         </div>`).join('');
