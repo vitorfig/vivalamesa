@@ -1115,6 +1115,83 @@
         }
 
         /* ============================
+           EVENTOS PRIVADOS
+           ============================ */
+        .eventos-privados {
+            background: var(--terra);
+            padding: 7rem 0;
+            position: relative;
+        }
+
+        .eventos-privados .section-label { color: var(--gold-pale); }
+
+        .eventos-privados .section-header h2 {
+            color: #fff;
+            font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+        }
+
+        .eventos-privados .section-header h2 em {
+            font-style: italic;
+            color: var(--gold-pale);
+        }
+
+        .eventos-privados .gold-divider-wide {
+            background: linear-gradient(to right, transparent, var(--gold-pale), transparent);
+        }
+
+        .eventos-privados-intro {
+            max-width: 620px;
+            margin: -2.5rem auto 3.5rem;
+            text-align: center;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .tipos-evento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.4rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .tipo-evento-card {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .tipo-evento-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(.22,1,.36,1);
+        }
+
+        .tipo-evento-card:hover img { transform: scale(1.08); }
+
+        .tipo-evento-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(30,15,10,0.92) 0%, rgba(30,15,10,0.15) 60%, transparent 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 1.4rem 1.2rem;
+        }
+
+        .tipo-evento-overlay span {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            color: #fff;
+            line-height: 1.25;
+        }
+
+        .eventos-privados-cta {
+            text-align: center;
+        }
+
+        /* ============================
            RESERVA CTA
            ============================ */
         .reserva {
@@ -1450,6 +1527,8 @@
             .steps-grid { grid-template-columns: repeat(2, 1fr); }
             .step::after { display: none; }
 
+            .tipos-evento-grid { grid-template-columns: repeat(2, 1fr); }
+
             .footer-grid { grid-template-columns: 1fr 1fr; }
             .footer-brand { grid-column: 1 / -1; }
 
@@ -1489,6 +1568,7 @@
             .galeria-strip { flex-direction: column; }
             .galeria-strip img { height: 200px; flex: unset; }
             .steps-grid { grid-template-columns: 1fr; }
+            .tipos-evento-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; }
             .footer-bottom { flex-direction: column; gap: 0.75rem; text-align: center; }
             .evento-card { display: flex; flex-direction: column; }
@@ -1900,6 +1980,41 @@
                 <h3 data-tk="como_s4_title">Viva a Experiência</h3>
                 <p data-tk="como_s4_desc">Chegue, relaxe e entregue-se. O Chef Raphael cuida de absolutamente tudo. Uma noite para lembrar.</p>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================================
+     EVENTOS PRIVADOS
+     ======================================================== -->
+<section class="eventos-privados">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">Sob Medida</span>
+            <h2>Leve o Viva La Mesa<br>para o seu <em>evento</em></h2>
+            <div class="gold-divider-wide"></div>
+        </div>
+        <p class="eventos-privados-intro reveal">Além do calendário de jantares, o Chef Raphael Gonzaga leva a experiência Viva La Mesa para comemorações privadas, no local que você escolher.</p>
+        <div class="tipos-evento-grid">
+            <div class="tipo-evento-card reveal">
+                <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=500&q=80" alt="Aniversários" loading="lazy">
+                <div class="tipo-evento-overlay"><span>Aniversários</span></div>
+            </div>
+            <div class="tipo-evento-card reveal">
+                <img src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?auto=format&fit=crop&w=500&q=80" alt="Jantares entre Amigos" loading="lazy">
+                <div class="tipo-evento-overlay"><span>Jantares entre Amigos</span></div>
+            </div>
+            <div class="tipo-evento-card reveal">
+                <img src="https://images.unsplash.com/photo-1631606305238-b76ec0f86af3?auto=format&fit=crop&w=500&q=80" alt="Eventos Corporativos" loading="lazy">
+                <div class="tipo-evento-overlay"><span>Eventos Corporativos</span></div>
+            </div>
+            <div class="tipo-evento-card reveal">
+                <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=500&q=80" alt="Celebrações Especiais" loading="lazy">
+                <div class="tipo-evento-overlay"><span>Celebrações Especiais</span></div>
+            </div>
+        </div>
+        <div class="eventos-privados-cta reveal">
+            <a href="https://wa.me/5548996245254?text=Olá!%20Quero%20saber%20mais%20sobre%20contratar%20o%20Viva%20La%20Mesa%20para%20o%20meu%20evento." class="btn-outline" target="_blank" style="border-color: rgba(255,255,255,0.4);">Falar no WhatsApp</a>
         </div>
     </div>
 </section>
