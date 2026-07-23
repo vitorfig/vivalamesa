@@ -1977,6 +1977,10 @@
                     <input type="tel" id="res-whatsapp" placeholder="(48) 99999-9999" required>
                 </div>
                 <div class="form-group">
+                    <label>Data de Nascimento</label>
+                    <input type="date" id="res-nascimento" required>
+                </div>
+                <div class="form-group">
                     <label>Evento</label>
                     <select id="evento-select" required>
                         <option value="">Selecione o evento</option>
@@ -2005,7 +2009,21 @@
     </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDDFCVHn_c-h6ufaWSNwD_FBmG24XvlTj0",
+      authDomain: "vivalamesa-ad367.firebaseapp.com",
+      projectId: "vivalamesa-ad367",
+      storageBucket: "vivalamesa-ad367.firebasestorage.app",
+      messagingSenderId: "746776669227",
+      appId: "1:746776669227:web:349809af4479ab8c128e6e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    db.settings({ experimentalAutoDetectLongPolling: true, useFetchStreams: false, merge: true });
+
     // ── IndexedDB helper (vídeo/áudio do admin) ──
     const VLM_IDB = {
       _db: null,
@@ -2157,7 +2175,7 @@
         success.style.display = 'none';
 
         // Limpa campos
-        ['res-nome','res-sobrenome','res-email','res-whatsapp'].forEach(id => {
+        ['res-nome','res-sobrenome','res-email','res-whatsapp','res-nascimento'].forEach(id => {
             const el = document.getElementById(id); if (el) el.value = '';
         });
         document.getElementById('res-pessoas').value = '';
@@ -2247,6 +2265,7 @@
             evento:      reserva.eventoLabel,
             pessoas:     pessoas,
             whatsapp:    reserva.whatsapp,
+            nascimento:  reserva.nascimento,
             preco:       preco ? 'R$ ' + preco : '',
             valor_total: total ? 'R$ ' + total : '',
             cidade:      ev ? ev.city + ', ' + ev.state : '',
@@ -2262,22 +2281,24 @@
         const eventoId = parseInt(select.value);
         const eventoLabel = select.options[select.selectedIndex]?.textContent || '';
         const reserva = {
-            id: Date.now(),
             nome: document.getElementById('res-nome').value.trim(),
             sobrenome: document.getElementById('res-sobrenome').value.trim(),
             email: document.getElementById('res-email').value.trim(),
             whatsapp: document.getElementById('res-whatsapp').value.trim(),
+            nascimento: document.getElementById('res-nascimento').value,
             eventoId,
             eventoLabel,
             pessoas: document.getElementById('res-pessoas').value,
             data: new Date().toLocaleString('pt-BR'),
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
             contatado: false
         };
-        try {
-            const reservas = JSON.parse(localStorage.getItem('vlm_reservas') || '[]');
-            reservas.push(reserva);
-            localStorage.setItem('vlm_reservas', JSON.stringify(reservas));
-        } catch(err) {}
+        db.collection('reservas').add(reserva).catch(err => console.error('Erro ao salvar reserva:', err));
+        if (eventoId) {
+            db.collection('vagas_count').doc(String(eventoId)).set(
+                { count: firebase.firestore.FieldValue.increment(1) }, { merge: true }
+            ).catch(err => console.error('Erro ao atualizar vagas:', err));
+        }
         sendConfirmationEmail(reserva);
         document.getElementById('form-area').style.display = 'none';
         document.getElementById('form-success').style.display = 'block';
@@ -2428,9 +2449,18 @@
       try { return JSON.parse(localStorage.getItem('vlm_scarcity')) || DEFAULT_SCARCITY_RULES; }
       catch(e) { return DEFAULT_SCARCITY_RULES; }
     }
+    let VAGAS_COUNT_CACHE = {};
+    function startVagasCountSync() {
+      db.collection('vagas_count').onSnapshot(snap => {
+        const next = {};
+        snap.docs.forEach(d => { next[d.id] = d.data().count || 0; });
+        VAGAS_COUNT_CACHE = next;
+        renderEvents();
+      }, err => console.error('Erro ao sincronizar vagas:', err));
+    }
     function getDisplayVagas(ev) {
       const total = ev.vagas_total || ev.vagas || 12;
-      const reservas = JSON.parse(localStorage.getItem('vlm_reservas')||'[]').filter(r => r.eventoId === ev.id).length;
+      const reservas = VAGAS_COUNT_CACHE[String(ev.id)] || 0;
       const realRemaining = Math.max(0, total - reservas);
       if (realRemaining === 0) return 0;
       const daysUntil = Math.ceil((parseEventDate(ev.day, ev.month) - new Date()) / 86400000);
@@ -2602,6 +2632,7 @@
 
     renderEvents();
     renderDishes();
+    startVagasCountSync();
 
     // ── SYNC JSONbin (todos os dispositivos) ──
     (async function syncRemoteData() {

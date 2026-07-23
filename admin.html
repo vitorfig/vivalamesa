@@ -478,7 +478,7 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
     <div class="panel" id="panel-reservas">
       <div class="panel-header">
         <h3>Reservas</h3>
-        <button class="btn-add" style="background:var(--terra);" onclick="if(confirm('Apagar TODAS as reservas?')){localStorage.removeItem('vlm_reservas');renderReservasList();toast('Reservas apagadas');}">Limpar tudo</button>
+        <button class="btn-add" style="background:var(--terra);" onclick="clearAllReservas()">Limpar tudo</button>
       </div>
       <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Solicitações feitas pelo formulário do site, agrupadas por evento.</p>
       <div id="reservas-container"></div>
@@ -803,12 +803,26 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
 
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
 <script>
 const PASS = 'vivalamesa2026';
 const BIN_ID  = '6a220187f5f4af5e29bac7cb';
 const BIN_KEY = '$2a$10$rweS9uffWfcxLLzxZ8nJ.etYtOqT9E2irqNG40WiLDTaFKvgo7BT6';
 const CLOUDINARY_CLOUD  = 'dcwcjuoxw';
 const CLOUDINARY_PRESET = 'vivalamesa_upload';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDDFCVHn_c-h6ufaWSNwD_FBmG24XvlTj0",
+  authDomain: "vivalamesa-ad367.firebaseapp.com",
+  projectId: "vivalamesa-ad367",
+  storageBucket: "vivalamesa-ad367.firebasestorage.app",
+  messagingSenderId: "746776669227",
+  appId: "1:746776669227:web:349809af4479ab8c128e6e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+db.settings({ experimentalAutoDetectLongPolling: true, useFetchStreams: false, merge: true });
 
 // ── CLOUDINARY UPLOAD ──
 async function uploadToCloudinary(file) {
@@ -936,6 +950,7 @@ function doLogin() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     renderAll();
+    startReservasSync();
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
@@ -949,6 +964,7 @@ window.addEventListener('load', () => {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     renderAll();
+    startReservasSync();
   }
 });
 
@@ -1416,9 +1432,21 @@ document.getElementById('dish-modal-bg').addEventListener('click', e => { if (e.
 document.getElementById('hero-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeHeroModal(); });
 document.getElementById('media-modal-bg').addEventListener('click', e => { if (e.target === e.currentTarget) closeMediaModal(); });
 
-// ── RESERVAS ──
-function getReservas() { try { return JSON.parse(localStorage.getItem('vlm_reservas') || '[]'); } catch(e) { return []; } }
-function saveReservas(arr) { localStorage.setItem('vlm_reservas', JSON.stringify(arr)); }
+// ── RESERVAS (Firestore) ──
+let _reservasCache = [];
+function getReservas() { return _reservasCache; }
+function startReservasSync() {
+  db.collection('reservas').orderBy('criadoEm', 'desc').onSnapshot(snap => {
+    _reservasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderReservasList();
+    renderEventList();
+  }, err => console.error('Erro ao sincronizar reservas:', err));
+}
+function formatNascimento(iso) {
+  if (!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return dia && mes && ano ? `${dia}/${mes}/${ano}` : iso;
+}
 
 function renderReservasList() {
   const container = document.getElementById('reservas-container');
@@ -1451,29 +1479,50 @@ function renderReservasList() {
             <div class="reserva-meta">
               📱 <a href="https://wa.me/55${r.whatsapp.replace(/\D/g,'')}" target="_blank">${r.whatsapp}</a>
               &nbsp;·&nbsp; ✉️ ${r.email}
+              ${r.nascimento ? `&nbsp;·&nbsp; 🎂 ${formatNascimento(r.nascimento)}` : ''}
               &nbsp;·&nbsp; 👥 ${r.pessoas} pessoa${r.pessoas > 1 ? 's' : ''}
               &nbsp;·&nbsp; 🕐 ${r.data}
               ${r.contatado ? '&nbsp;·&nbsp; <span style="color:var(--gold);font-weight:600;">✓ Contatado</span>' : ''}
             </div>
           </div>
           <div class="reserva-actions">
-            <button class="btn-contato ${r.contatado ? 'done' : ''}" onclick="toggleContatado(${r.id})">${r.contatado ? 'Reabrir' : 'Marcar contatado'}</button>
-            <button class="delete-btn" onclick="deleteReserva(${r.id})">Excluir</button>
+            <button class="btn-contato ${r.contatado ? 'done' : ''}" onclick="toggleContatado('${r.id}')">${r.contatado ? 'Reabrir' : 'Marcar contatado'}</button>
+            <button class="delete-btn" onclick="deleteReserva('${r.id}')">Excluir</button>
           </div>
         </div>`).join('')}
     </div>`).join('');
 }
 
 function toggleContatado(id) {
-  const reservas = getReservas();
-  const r = reservas.find(x => x.id === id);
-  if (r) { r.contatado = !r.contatado; saveReservas(reservas); renderReservasList(); toast(r.contatado ? 'Marcado como contatado' : 'Reaberto'); }
+  const r = _reservasCache.find(x => x.id === id);
+  if (!r) return;
+  db.collection('reservas').doc(id).update({ contatado: !r.contatado })
+    .then(() => toast(!r.contatado ? 'Marcado como contatado' : 'Reaberto'))
+    .catch(err => toast('❌ Erro: ' + err.message));
 }
 
 function deleteReserva(id) {
   if (!confirm('Excluir esta reserva?')) return;
-  saveReservas(getReservas().filter(r => r.id !== id));
-  renderReservasList(); toast('Reserva excluída');
+  const r = _reservasCache.find(x => x.id === id);
+  db.collection('reservas').doc(id).delete()
+    .then(() => {
+      if (r && r.eventoId != null) {
+        db.collection('vagas_count').doc(String(r.eventoId)).set(
+          { count: firebase.firestore.FieldValue.increment(-1) }, { merge: true }
+        );
+      }
+      toast('Reserva excluída');
+    })
+    .catch(err => toast('❌ Erro: ' + err.message));
+}
+
+function clearAllReservas() {
+  if (!confirm('Apagar TODAS as reservas?')) return;
+  const eventIds = [...new Set(_reservasCache.map(r => r.eventoId).filter(id => id != null))];
+  Promise.all(_reservasCache.map(r => db.collection('reservas').doc(r.id).delete()))
+    .then(() => Promise.all(eventIds.map(id => db.collection('vagas_count').doc(String(id)).set({ count: 0 }))))
+    .then(() => toast('Reservas apagadas'))
+    .catch(err => toast('❌ Erro: ' + err.message));
 }
 
 // ── DEFAULTS MEDIA ──
