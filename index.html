@@ -19,6 +19,7 @@
             --gold-light: #D4AF5C;
             --gold-pale: #EED99A;
             --terra: #8B4A35;
+            --terra-light: #E9CFBE;
             --text-dark: #1A1A1A;
             --text-mid: #555;
         }
@@ -1118,32 +1119,32 @@
            EVENTOS PRIVADOS
            ============================ */
         .eventos-privados {
-            background: var(--terra);
+            background: var(--terra-light);
             padding: 7rem 0;
             position: relative;
         }
 
-        .eventos-privados .section-label { color: var(--gold-pale); }
+        .eventos-privados .section-label { color: var(--terra); }
 
         .eventos-privados .section-header h2 {
-            color: #fff;
+            color: var(--green-dark);
             font-size: clamp(2.2rem, 4.5vw, 3.4rem);
         }
 
         .eventos-privados .section-header h2 em {
             font-style: italic;
-            color: var(--gold-pale);
+            color: var(--terra);
         }
 
         .eventos-privados .gold-divider-wide {
-            background: linear-gradient(to right, transparent, var(--gold-pale), transparent);
+            background: linear-gradient(to right, transparent, var(--terra), transparent);
         }
 
         .eventos-privados-intro {
             max-width: 620px;
             margin: -2.5rem auto 3.5rem;
             text-align: center;
-            color: rgba(255,255,255,0.75);
+            color: var(--text-mid);
             font-size: 0.95rem;
             line-height: 1.8;
         }
@@ -1189,6 +1190,28 @@
 
         .eventos-privados-cta {
             text-align: center;
+        }
+
+        .btn-terra {
+            display: inline-block;
+            background: var(--terra);
+            color: #fff;
+            text-decoration: none;
+            padding: 1.15rem 3.5rem;
+            font-family: 'Raleway', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            border: none;
+            transition: all 0.35s;
+            cursor: pointer;
+        }
+
+        .btn-terra:hover {
+            background: var(--green-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
         }
 
         /* ============================
@@ -1997,7 +2020,7 @@
         <p class="eventos-privados-intro reveal">Além do calendário de jantares, o Chef Raphael Gonzaga leva a experiência Viva La Mesa para comemorações privadas, no local que você escolher.</p>
         <div class="tipos-evento-grid">
             <div class="tipo-evento-card reveal">
-                <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=500&q=80" alt="Aniversários" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1693059740560-21151639561f?auto=format&fit=crop&w=500&q=80" alt="Aniversários" loading="lazy">
                 <div class="tipo-evento-overlay"><span>Aniversários</span></div>
             </div>
             <div class="tipo-evento-card reveal">
@@ -2014,7 +2037,7 @@
             </div>
         </div>
         <div class="eventos-privados-cta reveal">
-            <a href="https://wa.me/5548996245254?text=Olá!%20Quero%20saber%20mais%20sobre%20contratar%20o%20Viva%20La%20Mesa%20para%20o%20meu%20evento." class="btn-outline" target="_blank" style="border-color: rgba(255,255,255,0.4);">Falar no WhatsApp</a>
+            <a href="https://wa.me/5548996245254?text=Olá!%20Quero%20saber%20mais%20sobre%20contratar%20o%20Viva%20La%20Mesa%20para%20o%20meu%20evento." class="btn-terra" target="_blank">Reservar meu Evento</a>
         </div>
     </div>
 </section>
