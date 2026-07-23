@@ -478,7 +478,10 @@ body { font-family: 'Raleway', sans-serif; background: #F2EDE4; color: var(--tex
     <div class="panel" id="panel-reservas">
       <div class="panel-header">
         <h3>Reservas</h3>
-        <button class="btn-add" style="background:var(--terra);" onclick="clearAllReservas()">Limpar tudo</button>
+        <div style="display:flex;gap:0.6rem;">
+          <button class="btn-add" onclick="exportReservasCSV()">⬇ Baixar CSV</button>
+          <button class="btn-add" style="background:var(--terra);" onclick="clearAllReservas()">Limpar tudo</button>
+        </div>
       </div>
       <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Solicitações feitas pelo formulário do site, agrupadas por evento.</p>
       <div id="reservas-container"></div>
@@ -1514,6 +1517,26 @@ function deleteReserva(id) {
       toast('Reserva excluída');
     })
     .catch(err => toast('❌ Erro: ' + err.message));
+}
+
+function exportReservasCSV() {
+  if (!_reservasCache.length) { toast('Nenhuma reserva para exportar'); return; }
+  const cols = ['Nome', 'Sobrenome', 'E-mail', 'WhatsApp', 'Data de Nascimento', 'Evento', 'Pessoas', 'Data da Reserva', 'Contatado'];
+  const esc = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const rows = _reservasCache.map(r => [
+    r.nome, r.sobrenome, r.email, r.whatsapp, formatNascimento(r.nascimento),
+    r.eventoLabel, r.pessoas, r.data, r.contatado ? 'Sim' : 'Não'
+  ].map(esc).join(','));
+  const csv = '﻿' + [cols.map(esc).join(','), ...rows].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'reservas-vivalamesa-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function clearAllReservas() {

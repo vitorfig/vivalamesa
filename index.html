@@ -2258,20 +2258,26 @@
         const pessoas = parseInt(reserva.pessoas) || 1;
         const preco   = ev ? ev.price : 0;
         const total   = preco * pessoas;
+        // EmailJS faz escape HTML das variáveis (ex: "/" vira "&#x2F;"), o que
+        // quebra o assunto do e-mail (texto puro, não HTML). Troca a barra da
+        // data por "de" só para exibição no e-mail.
+        const eventoEmail = (reserva.eventoLabel || '').replace('/', ' de ');
+        const [anoNasc, mesNasc, diaNasc] = (reserva.nascimento || '').split('-');
+        const nascimentoEmail = (diaNasc && mesNasc && anoNasc) ? `${diaNasc}/${mesNasc}/${anoNasc}` : (reserva.nascimento || '');
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
             to_name:     reserva.nome,
             to_email:    reserva.email,
             sobrenome:   reserva.sobrenome,
-            evento:      reserva.eventoLabel,
+            evento:      eventoEmail,
             pessoas:     pessoas,
             whatsapp:    reserva.whatsapp,
-            nascimento:  reserva.nascimento,
+            nascimento:  nascimentoEmail,
             preco:       preco ? 'R$ ' + preco : '',
             valor_total: total ? 'R$ ' + total : '',
             cidade:      ev ? ev.city + ', ' + ev.state : '',
             name:        reserva.nome + ' ' + reserva.sobrenome,
             email:       reserva.email,
-            message:     reserva.eventoLabel,
+            message:     eventoEmail,
         }).catch(err => console.error('EmailJS erro:', err.status, err.text));
     }
 
