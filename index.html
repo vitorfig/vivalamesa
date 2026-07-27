@@ -2415,7 +2415,7 @@
         // EmailJS faz escape HTML das variáveis (ex: "/" vira "&#x2F;"), o que
         // quebra o assunto do e-mail (texto puro, não HTML). Troca a barra da
         // data por "de" só para exibição no e-mail.
-        const eventoEmail = (reserva.eventoLabel || '').replace('/', ' de ').replace(/—/g, '|');
+        const eventoEmail = (reserva.eventoLabel || '').replace('/', ' de ').replace(/—/g, '-');
         const [anoNasc, mesNasc, diaNasc] = (reserva.nascimento || '').split('-');
         const nascimentoEmail = (diaNasc && mesNasc && anoNasc) ? `${diaNasc}/${mesNasc}/${anoNasc}` : (reserva.nascimento || '');
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
